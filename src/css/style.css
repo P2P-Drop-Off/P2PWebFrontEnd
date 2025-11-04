@@ -1,0 +1,228 @@
+/* ======================================================
+   STYLE.CSS — GLOBAL / SHARED STYLES
+   Used by both index.html and create-account.html
+   ------------------------------------------------------
+   Contains:
+   - Color variables
+   - Global resets and typography
+   - Header / Footer
+   - Buttons, Inputs, Password toggles
+   ====================================================== */
+
+/* ===== Color Palette (Brand Colors) ===== */
+:root {
+  --brand-green: #1f4037;
+  --brand-green-700: #163029;
+  --brand-blue: #2d74a2;
+  --brand-blue-700: #255f86;
+  --surface: #f7f9fb;
+  --ink: #111;
+  --ink-2: #333;
+  --muted-ink: #555;
+  --line: #d6dde4;
+}
+
+/* ===== CSS Reset / Base Layout ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  background-color: var(--surface);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+header {
+  background-color: var(--brand-green);
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Footer ===== */
+footer {
+  background-color: var(--brand-green);
+  color: #fff;
+  text-align: center;
+  padding: 0.8rem 0;
+  margin-top: auto;
+  font-size: 0.9rem;
+}
+
+/* ======================================================
+   FORM INPUTS / SHARED ELEMENTS
+   ====================================================== */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="tel"] {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(45, 116, 162, 0.15);
+}
+
+/* ===== Password Field Wrapper ===== */
+.password-field {
+  position: relative;
+}
+
+.password-field .toggle {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 16px;
+  color: #4b5563;
+  transition: color 0.2s ease;
+}
+
+.password-field .toggle:hover {
+  color: #2d74a2;
+}
+
+/* Eye icons default/active states */
+.password-field .icon {
+  display: none;
+  pointer-events: none;
+}
+
+.password-field .toggle[data-visible="false"] .eye-off {
+  display: inline;
+}
+
+.password-field .toggle[data-visible="true"] .eye {
+  display: inline;
+}
+
+/* ===== Helper Text ===== */
+.helper-text {
+  color: var(--muted-ink);
+  font-size: 12px;
+  margin-top: -4px;
+  margin-bottom: 8px;
+}
+
+/* ======================================================
+   BUTTONS
+   ====================================================== */
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* --- Primary (Solid Blue) --- */
+.signin-btn,
+.cta-large {
+  background-color: var(--brand-blue);
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.signin-btn:hover,
+.cta-large:hover {
+  background-color: var(--brand-blue-700);
+}
+
+.signin-btn:active,
+.cta-large:active {
+  transform: translateY(1px);
+}
+
+/* --- Secondary (Light Blue / Outline) --- */
+.create-btn {
+  background-color: #a6cce6;
+  color: #000;
+  border: 1px solid var(--brand-blue);
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.create-btn:hover {
+  background-color: #91bddc;
+}
+
+/* ======================================================
+   LINKS
+   ====================================================== */
+a {
+  color: var(--brand-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.forgot {
+  text-align: right;
+  display: block;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* ======================================================
+   ACCESSIBILITY FOCUS STYLES
+   ====================================================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(45, 116, 162, 0.45);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ======================================================
+   UTILITY CLASSES
+   ====================================================== */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* ======================================================
+   RESPONSIVE HELPERS
+   ====================================================== */
+@media (max-width: 600px) {
+  header, footer {
+    font-size: 1rem;
+  }
+}
+

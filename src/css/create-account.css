@@ -1,0 +1,133 @@
+/* ======================================================
+   CREATE ACCOUNT PAGE (Signup Form)
+   This file only contains styles specific to create-account.html.
+   Shared buttons, inputs, and colors are handled in style.css.
+   ====================================================== */
+
+/* ===== Main container (auth card) ===== */
+.auth-wrap {
+  width: min(640px, 92vw);
+  margin: 2rem auto;
+  background: #fff;
+  border: 1px solid #d6dde4;
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
+}
+
+/* ===== Back chip button ===== */
+.back-chip {
+  background: #e9eef3;
+  color: #1f3b5b;
+  border: 1px solid #c9d5e1;
+  border-radius: 999px; /* pill shape */
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  margin-bottom: 10px;
+}
+
+.back-chip:hover {
+  background: #dfe7ef;
+  border-color: #b9c9d8;
+}
+
+/* ===== Page title ===== */
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #163029;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/* ======================================================
+   FORM GRID — Label + Input Alignment
+   Each label sits to the left of its input.
+   ====================================================== */
+.auth-form {
+  display: grid;
+  grid-template-columns: 150px 1fr; /* labels = 150px, inputs fill rest */
+  align-items: center;
+  gap: 10px 16px; /* row gap, column gap */
+}
+
+.auth-form label {
+  text-align: right;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"],
+.auth-form input[type="tel"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-form input:focus {
+  border-color: #2d74a2;
+  box-shadow: 0 0 0 3px rgba(45, 116, 162, 0.15);
+}
+
+/* Password field with eye toggle */
+.password-field {
+  position: relative;
+}
+
+.password-field .toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Helper text spans full width */
+.helper-text {
+  grid-column: 1 / -1; /* spans both columns */
+  font-size: 13px;
+  color: #666;
+  margin-top: -4px;
+}
+
+/* Submit button spans both columns */
+.cta-large {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #2d74a2;
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cta-large:hover {
+  background-color: #255f86;
+}
+
+/* ===== Responsive layout ===== */
+@media (max-width: 600px) {
+  .auth-form {
+    grid-template-columns: 1fr; /* stack labels above inputs on small screens */
+  }
+
+  .auth-form label {
+    text-align: left;
+  }
+}
+
