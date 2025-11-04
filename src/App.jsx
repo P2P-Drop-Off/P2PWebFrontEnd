@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import MapComponent from './components/MapComponent'
 import CreateAccount from './pages/CreateAccount'
+import LogIn from './pages/LogIn'
 import './App.css'
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
           <MapComponent />
         </div>
       } />
+      <Route path="/login" element={<LogIn />} />
       <Route path="/create-account" element={<CreateAccount />} />
     </Routes>
   )

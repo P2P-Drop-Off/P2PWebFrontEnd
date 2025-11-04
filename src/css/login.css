@@ -1,0 +1,94 @@
+/* ======================================================
+   INDEX PAGE (Sign-In) STYLES
+   This file controls layout & styling specific to index.html.
+   Base colors, fonts, and inputs are handled in style.css.
+   ====================================================== */
+
+/* Main container that centers the login card */
+.container {
+  text-align: center;
+  width: 320px;
+  max-width: 90vw;
+  margin: 3rem auto;
+  background-color: #fff;
+  border: 1px solid #d6dde4;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Optional logo placeholder box */
+.logo-box {
+  background-color: #e5e5e5;
+  height: 100px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px dashed #ccc;
+}
+
+/* Login form layout */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Email and password fields */
+.login-form input[type="email"],
+.login-form input[type="password"] {
+  width: 100%;
+}
+
+/* Password field with eye toggle */
+.password-field {
+  position: relative;
+}
+
+.password-field .toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Buttons on login page */
+.signin-btn {
+  width: 100%;
+  background-color: #2d74a2;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signin-btn:hover {
+  background-color: #255f86;
+}
+
+/* "Create Account" secondary button */
+.create-btn {
+  width: 100%;
+  background-color: #a6cce6;
+  border: 1px solid #2d74a2;
+  color: #000;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-btn:hover {
+  background-color: #91bddc;
+}
+
+/* Footer positioning */
+footer {
+  margin-top: 2rem;
+}
+
