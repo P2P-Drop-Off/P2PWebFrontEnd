@@ -1,133 +1,194 @@
-/* ======================================================
-   CREATE ACCOUNT PAGE (Signup Form)
-   This file only contains styles specific to create-account.html.
-   Shared buttons, inputs, and colors are handled in style.css.
-   ====================================================== */
+/* CREATE ACCOUNT PAGE (matches login art style) */
 
-/* ===== Main container (auth card) ===== */
-.auth-wrap {
-  width: min(640px, 92vw);
-  margin: 2rem auto;
-  background: #fff;
-  border: 1px solid #d6dde4;
-  border-radius: 12px;
-  padding: 24px 28px;
-  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
+/* Page layout */
+.create-account-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;   /* Put header at the top */
+  background: linear-gradient(180deg, #f6f9fb 0%, #fbfdff 100%);
 }
 
-/* ===== Back chip button ===== */
-.back-chip {
-  background: #e9eef3;
-  color: #1f3b5b;
-  border: 1px solid #c9d5e1;
-  border-radius: 999px; /* pill shape */
-  padding: 6px 12px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  margin-bottom: 10px;
-}
-
-.back-chip:hover {
-  background: #dfe7ef;
-  border-color: #b9c9d8;
-}
-
-/* ===== Page title ===== */
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #163029;
-  margin-bottom: 18px;
-  text-align: center;
-}
-
-/* ======================================================
-   FORM GRID — Label + Input Alignment
-   Each label sits to the left of its input.
-   ====================================================== */
-.auth-form {
-  display: grid;
-  grid-template-columns: 150px 1fr; /* labels = 150px, inputs fill rest */
+/* Only center the main card, NOT the header */
+.create-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 10px 16px; /* row gap, column gap */
+  padding: 36px 20px;
 }
 
-.auth-form label {
-  text-align: right;
-  font-weight: 600;
-  font-size: 14px;
-  color: #333;
+
+/* reuse base background like login */
+.create-account-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f6f9fb 0%, #fbfdff 100%);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-.auth-form input[type="text"],
-.auth-form input[type="email"],
-.auth-form input[type="password"],
-.auth-form input[type="tel"] {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+/* header - same white header (no green footer/header) */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: white;
 }
 
-.auth-form input:focus {
-  border-color: #2d74a2;
-  box-shadow: 0 0 0 3px rgba(45, 116, 162, 0.15);
+/* P2P circular gradient logo */
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg,#9be7ff,#d8a6ff);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-/* Password field with eye toggle */
+/* nav */
+.top-nav {
+  display:flex;
+  align-items:center;
+  gap:22px;
+}
+
+.top-nav a {
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+/* card */
+.create-main { padding: 36px 20px; }
+.create-card {
+  width: 520px;
+  max-width: calc(100% - 48px);
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* heading */
+.card-title {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: left;
+  color: #102233;
+}
+
+/* form */
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field label {
+  display:block;
+  margin-bottom:6px;
+  color:#374151;
+  font-size:14px;
+}
+
+.field input {
+  width:100%;
+  padding: 10px 14px;
+  padding-right: 48px;
+  border-radius: 8px;
+  border: 1px solid #d8e0e8;
+  font-size: 15px;
+  outline: none;
+  background: #fff;
+}
+
+.field input:focus {
+  border-color: #6fb3ff;
+  box-shadow: 0 0 0 3px rgba(111,179,255,0.12);
+}
+
+/* password field */
 .password-field {
   position: relative;
 }
 
-.password-field .toggle {
+.toggle-password {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  padding: 6px;
+  width: 36px;
+  height: 36px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+}
+.toggle-password svg { display:block; }
+
+/* small helper */
+.small-link {
+  color: #2d74a2;
+  text-decoration: none;
+  font-size: 14px;
+}
+.small-link:hover { text-decoration: underline; }
+
+/* buttons */
+.btn {
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  border:none;
 }
 
-/* Helper text spans full width */
-.helper-text {
-  grid-column: 1 / -1; /* spans both columns */
-  font-size: 13px;
-  color: #666;
-  margin-top: -4px;
-}
-
-/* Submit button spans both columns */
-.cta-large {
-  grid-column: 1 / -1;
-  width: 100%;
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: #2d74a2;
+.btn-primary {
+  background: linear-gradient(90deg,#6fb3ff,#c58bff);
   color: white;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.cta-large:hover {
-  background-color: #255f86;
+/* divider */
+.divider { height: 12px; }
+
+/* support box (smaller variant) */
+.support-box.small {
+  margin-top: 10px;
+  padding: 14px;
+  background: #ffffff;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  font-size: 14px;
+  color: #24323f;
 }
 
-/* ===== Responsive layout ===== */
-@media (max-width: 600px) {
-  .auth-form {
-    grid-template-columns: 1fr; /* stack labels above inputs on small screens */
-  }
-
-  .auth-form label {
-    text-align: left;
-  }
+.support-box.small a {
+  color: #1a73e8;
+  text-decoration: none;
 }
 
+/* responsive */
+@media (max-width: 560px) {
+  .create-card { width: 100%; padding: 20px; }
+  .row-two { grid-template-columns: 1fr; }
+}

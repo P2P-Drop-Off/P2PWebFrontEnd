@@ -1,129 +1,142 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../css/style.css';
-import '../css/login.css';
+// src/pages/LogIn.jsx
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../css/style.css";
+import "../css/login.css";
 
-function LogIn() {
+export default function LogIn() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  const handleChange = (e) => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [e.target.name]: e.target.value,
     }));
-  };
-
-  const handlePasswordToggle = () => {
-    setShowPassword(prev => !prev);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Add actual authentication logic
-    console.log('Login attempt:', formData);
-    // Navigate to home or dashboard after successful login
-    // navigate('/');
+    console.log("login attempt", formData);
+    // TODO: run auth and navigate on success
   };
 
   return (
-    <>
-      <header>
-        <h1>Peer to Peer Drop Off</h1>
+    <div className="login-page">
+      {/* Header */}
+      <header className="site-header">
+        <div className="brand" onClick={() => navigate("/")}>
+          <div className="logo">P2P</div>
+        </div>
+
+        <nav className="top-nav">
+          <a onClick={() => navigate("/create-listing")}>Create a Listing</a>
+          <a onClick={() => navigate("/terms")}>Terms of Service</a>
+
+          <button
+            className="nav-btn gradient-outline"
+            onClick={() => navigate("/login")}
+          >
+            Sign In
+          </button>
+
+          <button
+            className="nav-btn gradient-solid"
+            onClick={() => navigate("/create-account")}
+          >
+            Sign Up
+          </button>
+        </nav>
       </header>
 
-      <main className="container">
-        <div className="logo-box"></div>
+      {/* Main */}
+      <main className="login-main">
+        <div className="login-card" role="region" aria-labelledby="signin-title">
+          <h2 id="signin-title" className="card-title">Peer to Peer Drop Off</h2>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-
-          <div className="password-field">
+          <form onSubmit={handleSubmit} className="login-form" noValidate>
+            <label htmlFor="email">Email</label>
             <input
-              type={showPassword ? "text" : "password"}
-              id="loginPassword"
-              name="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleInputChange}
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
+
+            <label htmlFor="password">Password</label>
+            <div className="password-field">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                aria-describedby="forgot-link"
+              />
+
+              <button
+                type="button"
+                className="toggle-password"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                onClick={() => setShowPassword((p) => !p)}
+              >
+                {showPassword ? (
+                  // eye-off / slashed eye
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-10-8-10-8a18 18 0 0 1 5.23-6.08"></path>
+                    <path d="M1 1l22 22"></path>
+                  </svg>
+                ) : (
+                  // eye
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {/* Forgot password (right aligned) */}
+            <div className="row-between">
+              <div></div>
+              <a id="forgot-link" href="#" className="forgot" onClick={(e) => e.preventDefault()}>
+                Forgot password?
+              </a>
+            </div>
+
+            <button type="submit" className="btn btn-primary">Sign In</button>
+
+            <div className="divider"></div>
+
             <button
-              className="toggle"
               type="button"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              aria-pressed={showPassword}
-              data-visible={showPassword}
-              onClick={handlePasswordToggle}
+              className="btn btn-outline"
+              onClick={() => navigate("/create-account")}
             >
-              {/* Open eye (shown when visible=true) */}
-              <svg
-                className="icon eye"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                style={{ display: showPassword ? "inline" : "none" }}
-              >
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-              {/* Slashed eye (shown by default when visible=false) */}
-              <svg
-                className="icon eye-off"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                style={{ display: showPassword ? "none" : "inline" }}
-              >
-                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.87 21.87 0 0 1 5.06-6.94"></path>
-                <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.83 21.83 0 0 1-3.87 4.94"></path>
-                <path d="M1 1l22 22"></path>
-              </svg>
+              Create Account
             </button>
-          </div>
 
-          <a href="#" className="forgot">Forgot password?</a>
+            {/* SUPPORT BOX (same as Create Account) */}
+            <div className="support-box small" style={{ marginTop: "16px" }}>
+              <p>Need help? Contact support</p>
+              <p><a href="mailto:support@peertopeerdropoff.com">support@peertopeerdropoff.com</a></p>
+              <p>123-456-7890</p>
+            </div>
 
-          <button type="submit" className="signin-btn">Sign In</button>
-          <button
-            type="button"
-            className="create-btn"
-            onClick={() => navigate('/create-account')}
-          >
-            Create Account
-          </button>
-        </form>
+          </form>
+        </div>
       </main>
-
-      <footer>
-        <p>&copy; 2025 Peer to Peer Drop Off | All Rights Reserved</p>
-      </footer>
-    </>
+    </div>
   );
 }
-
-export default LogIn;

@@ -1,176 +1,193 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../css/style.css';
-import '../css/create-account.css';
+// src/pages/CreateAccount.jsx
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "../css/style.css";
+import "../css/create-account.css";
 
-function CreateAccount() {
+export default function CreateAccount() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    password: ''
-  });
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirm: "",
+  });
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handlePasswordToggle = () => {
-    setShowPassword(prev => !prev);
+    setForm((p) => ({ ...p, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Add actual form submission logic
-    alert('Account created successfully!');
-    navigate('/');
+    // basic client-side check
+    if (form.password !== form.confirm) {
+      alert("Passwords do not match.");
+      return;
+    }
+    console.log("create account", form);
+    // TODO: submit to backend, then navigate to dashboard or login
+    navigate("/login");
   };
 
   return (
-    <div className="page-signup">
-      {/* Header */}
-      <header>
-        <h1>Peer to Peer Drop Off</h1>
-      </header>
+    <div className="create-account-page">
+      {/* Header (same style as Login: white header with P2P badge + nav) */}
+      <header className="site-header">
+        <div className="brand" onClick={() => navigate("/")}>
+          <div className="logo">P2P</div>
+        </div>
 
-      {/* Main */}
-      <main>
-        <div className="auth-wrap">
-          <button 
-            className="back-chip" 
-            onClick={() => navigate('/')}
-          >
-            ← Back to Login
+        <nav className="top-nav">
+          <a onClick={() => navigate("/create-listing")}>Create a Listing</a>
+          <a onClick={() => navigate("/terms")}>Terms of Service</a>
+
+          <button className="nav-btn gradient-outline" onClick={() => navigate("/login")}>
+            Sign In
           </button>
 
-          <h2 className="page-title">Create Your Account</h2>
+          <button className="nav-btn gradient-solid" onClick={() => navigate("/create-account")}>
+            Sign Up
+          </button>
+        </nav>
+      </header>
 
-          <form className="auth-form" id="signupForm" onSubmit={handleSubmit}>
-            {/* First Name */}
-            <label htmlFor="firstName">First Name</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              placeholder="John"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              required
-            />
+      {/* Main content */}
+      <main className="create-main">
+        <div className="create-card" role="region" aria-labelledby="create-title">
+          <h2 id="create-title" className="card-title">Create an account</h2>
 
-            {/* Last Name */}
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              placeholder="Doe"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              required
-            />
+          <form className="create-form" onSubmit={handleSubmit} noValidate>
+            <div className="row-two">
+              <div className="field">
+                <label htmlFor="firstName">First name</label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder="First"
+                  value={form.firstName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            {/* Phone */}
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              placeholder="(123) 456-7890"
-              value={formData.phone}
-              onChange={handleInputChange}
-              required
-            />
-
-            {/* Email */}
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-
-            {/* Password */}
-            <label htmlFor="signupPassword">Password</label>
-            <div className="password-field">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="signupPassword"
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-              <button
-                className="toggle"
-                type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                aria-pressed={showPassword}
-                data-visible={showPassword}
-                onClick={handlePasswordToggle}
-              >
-                {/* Eye (open) */}
-                <svg
-                  className="icon eye"
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ display: showPassword ? "inline" : "none" }}
-                >
-                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                {/* Eye-off (default) */}
-                <svg
-                  className="icon eye-off"
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ display: showPassword ? "none" : "inline" }}
-                >
-                  <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.87 21.87 0 0 1 5.06-6.94" />
-                  <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.83 21.83 0 0 1-3.87 4.94" />
-                  <path d="M1 1l22 22" />
-                </svg>
-              </button>
+              <div className="field">
+                <label htmlFor="lastName">Last name</label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Last"
+                  value={form.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
-            <p className="helper-text">Password must be at least 8 characters long.</p>
+            <div className="field">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-            <button type="submit" className="cta-large">Create Account</button>
+            <div className="field">
+              <label htmlFor="password">Password</label>
+              <div className="password-field">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a strong password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((s) => !s)}
+                >
+                  {showPassword ? (
+                    /* eye-off */
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-10-8-10-8a18 18 0 0 1 5.23-6.08"></path>
+                      <path d="M1 1l22 22"></path>
+                    </svg>
+                  ) : (
+                    /* eye */
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="confirm">Confirm password</label>
+              <div className="password-field">
+                <input
+                  id="confirm"
+                  name="confirm"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Repeat password"
+                  value={form.confirm}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                  onClick={() => setShowConfirm((s) => !s)}
+                >
+                  {showConfirm ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-10-8-10-8a18 18 0 0 1 5.23-6.08"></path>
+                      <path d="M1 1l22 22"></path>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="row-between">
+              <div></div>
+              <Link to="/login" className="small-link">Already have an account? Sign in</Link>
+            </div>
+
+            <button type="submit" className="btn btn-primary">Create account</button>
+
+            <div className="divider"></div>
+
+            <div className="support-box small">
+              <p>Need help? Contact support</p>
+              <p><a href="mailto:support@peertopeerdropoff.com">support@peertopeerdropoff.com</a></p>
+              <p>123-456-7890</p>
+            </div>
           </form>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer>
-        <p>© 2025 Peer to Peer Drop Off. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
-
-export default CreateAccount;
-

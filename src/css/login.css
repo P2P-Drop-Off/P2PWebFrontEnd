@@ -1,94 +1,317 @@
-/* ======================================================
-   INDEX PAGE (Sign-In) STYLES
-   This file controls layout & styling specific to index.html.
-   Base colors, fonts, and inputs are handled in style.css.
-   ====================================================== */
+/* ───────────────────────────── */
+/*         LOGIN PAGE BASE       */
+/* ───────────────────────────── */
 
-/* Main container that centers the login card */
-.container {
+.login-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f6f9fb 0%, #fbfdff 100%);
+  font-family: system-ui, sans-serif;
+}
+
+/* ───────────────────────────── */
+/*           HEADER (MATCHES HOME) */
+/* ───────────────────────────── */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: white;
+}
+
+/* P2P circular gradient logo */
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #9be7ff, #d8a6ff);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* NAV */
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 14px;
+}
+
+.top-nav a {
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a5568;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.top-nav a:hover {
+  opacity: 0.6;
+}
+
+/* Shared nav button base */
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+/* Sign In (gradient outline) */
+.gradient-outline {
+  background: white;
+  border: 2px solid transparent;
+  background-clip: padding-box, border-box;
+  background-image: linear-gradient(white, white),
+    linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: #6a5acd;
+  transition: 0.2s ease;
+}
+
+.gradient-outline:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* Sign Up (gradient solid) */
+.gradient-solid {
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: white;
+  transition: 0.2s ease;
+}
+
+.gradient-solid:hover {
+  transform: translateY(-1px);
+}
+
+/* ───────────────────────────── */
+/*        LOGIN CARD STYLING     */
+/* ───────────────────────────── */
+
+.login-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.login-card {
+  width: 400px;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.card-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 700;
   text-align: center;
-  width: 320px;
-  max-width: 90vw;
-  margin: 3rem auto;
-  background-color: #fff;
-  border: 1px solid #d6dde4;
-  border-radius: 10px;
-  padding: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  color: #1a202c;
 }
 
-/* Optional logo placeholder box */
-.logo-box {
-  background-color: #e5e5e5;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  border: 1px dashed #ccc;
-}
+/* ───────────────────────────── */
+/*             FORM              */
+/* ───────────────────────────── */
 
-/* Login form layout */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
-/* Email and password fields */
-.login-form input[type="email"],
-.login-form input[type="password"] {
+label {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+/* Ensure extra right padding so the eye icon never overlaps text */
+input {
   width: 100%;
+  padding: 10px 14px;
+  padding-right: 48px; /* increase space for the eye button */
+  border-radius: 8px;
+  border: 1px solid #d8e0e8;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.15s ease;
+  background: #ffffff;
 }
 
-/* Password field with eye toggle */
+input:focus {
+  border-color: #6fb3ff;
+  box-shadow: 0 0 0 3px rgba(111, 179, 255, 0.25);
+}
+
+/* ───────────────────────────── */
+/*   PASSWORD FIELD + EYE ICON   */
+/* ───────────────────────────── */
+
 .password-field {
   position: relative;
 }
 
-.password-field .toggle {
+/* Give the toggle button a fixed box so svg doesn't get clipped */
+.toggle-password {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
+  padding: 6px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
 }
 
-/* Buttons on login page */
-.signin-btn {
+.toggle-password svg {
+  display: block; /* ensure the full viewbox renders, prevents clipping */
+}
+
+/* ───────────────────────────── */
+/* FORGOT LINK (right aligned)  */
+/* ───────────────────────────── */
+
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot {
+  color: #2d74a2;
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: 6px;
+}
+.forgot:hover {
+  text-decoration: underline;
+}
+
+/* ───────────────────────────── */
+/*            BUTTONS            */
+/* ───────────────────────────── */
+
+.btn {
   width: 100%;
-  background-color: #2d74a2;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 12px 14px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-size: 15px;
+  transition: 0.2s ease;
+  border: none;
 }
 
-.signin-btn:hover {
-  background-color: #255f86;
+/* Primary gradient button */
+.btn-primary {
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: #ffffff;
 }
 
-/* "Create Account" secondary button */
-.create-btn {
-  width: 100%;
-  background-color: #a6cce6;
-  border: 1px solid #2d74a2;
-  color: #000;
-  border-radius: 6px;
-  padding: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.btn-primary:hover {
+  transform: translateY(-2px);
 }
 
-.create-btn:hover {
-  background-color: #91bddc;
+/* Outline button */
+.btn-outline {
+  background: #f1f6fb;
+  color: #23303a;
+  border: 1px solid rgba(16, 34, 51, 0.09);
 }
 
-/* Footer positioning */
-footer {
-  margin-top: 2rem;
+.btn-outline:hover {
+  transform: translateY(-2px);
 }
 
+/* ───────────────────────────── */
+/* RESPONSIVE */
+/* ───────────────────────────── */
+
+@media (max-width: 450px) {
+  .login-card {
+    width: 90%;
+    padding: 24px;
+  }
+
+  .top-nav {
+    gap: 12px;
+  }
+}
+/* Support contact block under Create Account */
+.support {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: #556070;
+}
+
+.support-heading {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.support-contacts {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.support-contacts a {
+  color: var(--brand-blue);
+  text-decoration: none;
+}
+
+.support-contacts a:hover {
+  text-decoration: underline;
+}
+
+.support-contacts .sep {
+  color: #9aa6b2;
+  margin: 0 6px;
+}
+/* SUPPORT BOX - small variant (same as Create Account) */
+.support-box.small {
+  margin-top: 10px;
+  padding: 14px;
+  background: #ffffff;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  font-size: 14px;
+  color: #24323f;
+}
+
+.support-box.small p {
+  margin: 6px 0;
+}
+
+.support-box.small a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.support-box.small a:hover {
+  text-decoration: underline;
+}
