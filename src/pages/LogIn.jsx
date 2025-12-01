@@ -1,6 +1,7 @@
 // src/pages/LogIn.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 import "../css/style.css";
 import "../css/login.css";
 
@@ -24,31 +25,7 @@ export default function LogIn() {
 
   return (
     <div className="login-page">
-      {/* Header */}
-      <header className="site-header">
-        <div className="brand" onClick={() => navigate("/")}>
-          <div className="logo">P2P</div>
-        </div>
-
-        <nav className="top-nav">
-          <a onClick={() => navigate("/create-listing")}>Create a Listing</a>
-          <a onClick={() => navigate("/terms")}>Terms of Service</a>
-
-          <button
-            className="nav-btn gradient-outline"
-            onClick={() => navigate("/login")}
-          >
-            Sign In
-          </button>
-
-          <button
-            className="nav-btn gradient-solid"
-            onClick={() => navigate("/create-account")}
-          >
-            Sign Up
-          </button>
-        </nav>
-      </header>
+      <Header />
 
       {/* Main */}
       <main className="login-main">

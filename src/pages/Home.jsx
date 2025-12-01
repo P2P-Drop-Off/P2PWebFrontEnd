@@ -1,6 +1,7 @@
 // src/pages/Home.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 import '../css/home.css';
 import '../css/style.css'; // shared tokens
 
@@ -13,26 +14,7 @@ export default function Home() {
   
   return (
     <div className="home-page">
-      <header className="site-header">
-        <div className="brand">
-          <div className="logo">P2P</div>
-        </div>
-    
-        <nav className="top-nav">
-  <a onClick={() => navigate('/create-listing')}>Create a Listing</a>
-  <a onClick={() => navigate('/terms')}>Terms of Service</a>
-
-  <button className="nav-btn gradient-outline" onClick={() => navigate('/login')}>
-    Sign In
-  </button>
-
-  <button className="nav-btn gradient-solid" onClick={() => navigate('/create-account')}>
-    Sign Up
-  </button>
-</nav>
-
-
-      </header>
+      <Header />
 
       <main className="listing-container">
         <section className="intro-card" aria-labelledby="welcome-heading">
