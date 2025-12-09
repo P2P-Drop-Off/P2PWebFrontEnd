@@ -1,6 +1,7 @@
 // src/pages/LogIn.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {logIn} from "../functions/firebase";
 import Header from "../components/Header";
 import "../css/style.css";
 import "../css/login.css";
@@ -10,6 +11,9 @@ export default function LogIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
+  const [error, setError] = useState("");     // ⬅ optional: show error messages
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -17,10 +21,23 @@ export default function LogIn() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // just added async signature to this
     e.preventDefault();
     console.log("login attempt", formData);
-    // TODO: run auth and navigate on success
+
+    try {
+      await logIn(formData.email, formData.password);
+      console.log("Logged in successfully")
+      navigate("/"); // TODO: redirect after login to somewhere idk
+
+    } catch (err) {
+      console.error(err);
+      setError(err.message.replace("Firebase:", ""));
+
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   return (

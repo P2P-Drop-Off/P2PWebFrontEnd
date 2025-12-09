@@ -1,6 +1,7 @@
 // src/pages/CreateAccount.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { signUp } from "../functions/firebase";
 import Header from "../components/Header";
 import "../css/style.css";
 import "../css/create-account.css";
@@ -23,16 +24,30 @@ export default function CreateAccount() {
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     // basic client-side check
     if (form.password !== form.confirm) {
       alert("Passwords do not match.");
       return;
     }
-    console.log("create account", form);
-    // TODO: submit to backend, then navigate to dashboard or login
-    navigate("/login");
+
+    // attempt to create account with firebase
+    try {
+
+      await signUp(form.email, form.password, form.firstName, form.lastName);
+      console.log("Account created successfully");
+      // TODO: store other credentials
+      navigate("/login");
+
+    } catch (error) {
+
+      console.error("Error creating account: ", error);
+      alert(error.message.replace("Error:", ""));
+
+    } // TODO: account already exists case, and other edge cases
+
   };
 
   return (
