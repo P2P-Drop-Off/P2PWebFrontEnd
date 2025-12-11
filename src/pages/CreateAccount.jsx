@@ -1,11 +1,13 @@
 // src/pages/CreateAccount.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signUp } from "../functions/firebase";
 import "../css/create-account.css";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   // Form State
   const [form, setForm] = useState({
@@ -31,6 +33,33 @@ export default function CreateAccount() {
 
   const handleBack = () => {
     setStep((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleCreateAccount = async () => {
+    setIsCreatingAccount(true);
+    try {
+      await signUp(
+        form.email,
+        form.password,
+        form.firstName,
+        form.lastName,
+        form.city,
+        form.state,
+        form.zip,
+        form.interests
+      );
+      console.log("Account created successfully");
+      // Navigate to login after successful account creation
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500); // Small delay to show success state
+    } catch (error) {
+      console.error("Error creating account:", error);
+      alert(error.message.replace("Error:", ""));
+      setIsCreatingAccount(false);
+      // Go back to step 1 to correct information
+      setStep(1);
+    }
   };
 
   return (
@@ -148,7 +177,13 @@ export default function CreateAccount() {
               onNext={handleNext}
             />
           )}
-          {step === 4 && <Step4AllSet onBack={handleBack} onNext={() => navigate("/login")} />}
+          {step === 4 && (
+            <Step4AllSet
+              onBack={handleBack}
+              onCreate={handleCreateAccount}
+              isCreating={isCreatingAccount}
+            />
+          )}
         </div>
       </main>
     </div>
@@ -223,6 +258,22 @@ function Step1AccountDetails({ form, handleChange, onNext }) {
     return null;
   };
 
+  const validateEmail = () => {
+    const email = form.email.trim();
+
+    if (!email) {
+      return "Please enter your email address";
+    }
+
+    // Basic email regex validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+
+    return null;
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -232,8 +283,10 @@ function Step1AccountDetails({ form, handleChange, onNext }) {
     if (!form.lastName.trim()) {
       newErrors.lastName = "Please enter your last name";
     }
-    if (!form.email.trim()) {
-      newErrors.email = "Please enter your email address";
+
+    const emailError = validateEmail();
+    if (emailError) {
+      newErrors.email = emailError;
     }
 
     const passwordError = validatePassword();
@@ -394,17 +447,80 @@ function Step2Location({ form, handleChange, onBack, onNext }) {
   const [errors, setErrors] = React.useState({});
   const [attemptedSubmit, setAttemptedSubmit] = React.useState(false);
 
+  // List of all 50 US states
+  const US_STATES = [
+    { value: "", label: "Select a state..." },
+    { value: "AL", label: "Alabama" },
+    { value: "AK", label: "Alaska" },
+    { value: "AZ", label: "Arizona" },
+    { value: "AR", label: "Arkansas" },
+    { value: "CA", label: "California" },
+    { value: "CO", label: "Colorado" },
+    { value: "CT", label: "Connecticut" },
+    { value: "DE", label: "Delaware" },
+    { value: "FL", label: "Florida" },
+    { value: "GA", label: "Georgia" },
+    { value: "HI", label: "Hawaii" },
+    { value: "ID", label: "Idaho" },
+    { value: "IL", label: "Illinois" },
+    { value: "IN", label: "Indiana" },
+    { value: "IA", label: "Iowa" },
+    { value: "KS", label: "Kansas" },
+    { value: "KY", label: "Kentucky" },
+    { value: "LA", label: "Louisiana" },
+    { value: "ME", label: "Maine" },
+    { value: "MD", label: "Maryland" },
+    { value: "MA", label: "Massachusetts" },
+    { value: "MI", label: "Michigan" },
+    { value: "MN", label: "Minnesota" },
+    { value: "MS", label: "Mississippi" },
+    { value: "MO", label: "Missouri" },
+    { value: "MT", label: "Montana" },
+    { value: "NE", label: "Nebraska" },
+    { value: "NV", label: "Nevada" },
+    { value: "NH", label: "New Hampshire" },
+    { value: "NJ", label: "New Jersey" },
+    { value: "NM", label: "New Mexico" },
+    { value: "NY", label: "New York" },
+    { value: "NC", label: "North Carolina" },
+    { value: "ND", label: "North Dakota" },
+    { value: "OH", label: "Ohio" },
+    { value: "OK", label: "Oklahoma" },
+    { value: "OR", label: "Oregon" },
+    { value: "PA", label: "Pennsylvania" },
+    { value: "RI", label: "Rhode Island" },
+    { value: "SC", label: "South Carolina" },
+    { value: "SD", label: "South Dakota" },
+    { value: "TN", label: "Tennessee" },
+    { value: "TX", label: "Texas" },
+    { value: "UT", label: "Utah" },
+    { value: "VT", label: "Vermont" },
+    { value: "VA", label: "Virginia" },
+    { value: "WA", label: "Washington" },
+    { value: "WV", label: "West Virginia" },
+    { value: "WI", label: "Wisconsin" },
+    { value: "WY", label: "Wyoming" }
+  ];
+
+  const validateZipCode = (zip) => {
+    // Validate ZIP code format (5 digits or ZIP+4 format)
+    const zipRegex = /^\d{5}(-\d{4})?$/;
+    return zipRegex.test(zip.trim());
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
     if (!form.city.trim()) {
       newErrors.city = "Please enter your city";
     }
-    if (!form.state.trim()) {
-      newErrors.state = "Please enter your state or region";
+    if (!form.state || form.state === "") {
+      newErrors.state = "Please select your state";
     }
     if (!form.zip.trim()) {
       newErrors.zip = "Please enter your ZIP code";
+    } else if (!validateZipCode(form.zip)) {
+      newErrors.zip = "Please enter a valid ZIP code (e.g., 12345 or 12345-6789)";
     }
 
     return newErrors;
@@ -445,15 +561,19 @@ function Step2Location({ form, handleChange, onBack, onNext }) {
 
       <div className="form-group-row">
         <div className="form-group">
-          <label>State / Region</label>
-          <input
-            type="text"
+          <label>State</label>
+          <select
             name="state"
             value={form.state}
             onChange={handleChange}
-            placeholder="Type your state here"
             className={`input-field ${errors.state ? 'error' : ''}`}
-          />
+          >
+            {US_STATES.map((state) => (
+              <option key={state.value} value={state.value}>
+                {state.label}
+              </option>
+            ))}
+          </select>
           {errors.state && <p className="error-text">{errors.state}</p>}
         </div>
         <div className="form-group">
@@ -463,8 +583,9 @@ function Step2Location({ form, handleChange, onBack, onNext }) {
             name="zip"
             value={form.zip}
             onChange={handleChange}
-            placeholder="Type your zip code here"
+            placeholder="12345"
             className={`input-field ${errors.zip ? 'error' : ''}`}
+            maxLength="10"
           />
           {errors.zip && <p className="error-text">{errors.zip}</p>}
         </div>
@@ -473,7 +594,8 @@ function Step2Location({ form, handleChange, onBack, onNext }) {
       <div className="info-box">
         <span className="bulb-icon">💡</span>
         <p>
-          Your location helps us show you the best local pickup and drop off spots
+          Your location helps us show you the best local deals and reduces
+          shipping costs
         </p>
       </div>
 
@@ -554,7 +676,7 @@ function Step3Interests({ form, setForm, onBack, onNext }) {
   );
 }
 
-function Step4AllSet({ onBack, onNext }) {
+function Step4AllSet({ onBack, onCreate, isCreating }) {
   return (
     <div className="step-container fade-in center-content">
       <div className="success-icon-large">
@@ -578,28 +700,39 @@ function Step4AllSet({ onBack, onNext }) {
 
       <h2>Welcome to P2P!</h2>
       <p className="step-subtitle">
-        Your account is ready. Start exploring thousands of quality second-hand
-        items from trusted sellers in your area.
+        {isCreating
+          ? "Creating your account..."
+          : "Your account is ready. Start exploring thousands of quality second-hand items from trusted sellers in your area."}
       </p>
 
-      <div className="next-steps-box">
-        <h3>What's next?</h3>
-        <ul>
-          <li>Browse items in your area</li>
-          <li>Save your favorites</li>
-          <li>Message sellers directly</li>
-          <li>Complete secure transactions</li>
-        </ul>
-      </div>
+      {!isCreating && (
+        <>
+          <div className="next-steps-box">
+            <h3>What's next?</h3>
+            <ul>
+              <li>Browse items in your area</li>
+              <li>Save your favorites</li>
+              <li>Message sellers directly</li>
+              <li>Complete secure transactions</li>
+            </ul>
+          </div>
 
-      <div className="action-bar">
-        <button className="btn-secondary" onClick={onBack}>
-          Back
-        </button>
-        <button className="btn-primary" onClick={onNext}>
-          Start Shopping &gt;
-        </button>
-      </div>
+          <div className="action-bar">
+            <button className="btn-secondary" onClick={onBack}>
+              Back
+            </button>
+            <button className="btn-primary" onClick={onCreate}>
+              Create Account &gt;
+            </button>
+          </div>
+        </>
+      )}
+
+      {isCreating && (
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+        </div>
+      )}
     </div>
   );
 }
