@@ -1,13 +1,15 @@
 // src/pages/LogIn.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {logIn} from "../functions/firebase";
+import { logIn } from "../functions/firebase";
 import Header from "../components/Header";
+import { useListings } from "../context/ListingsContext";
 import "../css/style.css";
 import "../css/login.css";
 
 export default function LogIn() {
   const navigate = useNavigate();
+  const { login } = useListings(); // Get login function from context
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
@@ -27,8 +29,19 @@ export default function LogIn() {
 
     try {
       await logIn(formData.email, formData.password);
-      console.log("Logged in successfully")
-      navigate("/"); // TODO: redirect after login to somewhere idk
+      console.log("Logged in successfully");
+
+      // Update Context with name derived from email (or ideally from firebase user profile if available, but email is simpler for now)
+      const emailName = formData.email.split('@')[0];
+      const formattingName = emailName
+        .split(/[._]/)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+
+      login({ name: formattingName, email: formData.email });
+
+      // Navigate to selling dashboard
+      navigate('/selling');
 
     } catch (err) {
       console.error(err);

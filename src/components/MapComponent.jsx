@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchLocations } from '../functions/locationService';
 
-const MapComponent = () => {
+const MapComponent = ({ height = '100%', width = '100%', markers = [], onMarkerClick, center }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
@@ -20,7 +20,7 @@ const MapComponent = () => {
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setCenter(location);
       mapInstanceRef.current.setZoom(15);
-      
+
       // Update or create marker
       if (markerRef.current) {
         markerRef.current.setPosition(location);
@@ -43,7 +43,7 @@ const MapComponent = () => {
       setShowZipInput(true);
       return;
     }
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const location = {
@@ -79,7 +79,7 @@ const MapComponent = () => {
           const lat = location.lat();
           const lng = location.lng();
           const locationObj = { lat, lng };
-          
+
           setUserLocation(locationObj);
           centerMapOnLocation(locationObj);
         } else {
@@ -95,7 +95,7 @@ const MapComponent = () => {
     try {
       const fetchedLocations = await fetchLocations();
       setLocations(fetchedLocations);
-      
+
       if (mapInstanceRef.current && window.google) {
         // Clear existing markers
         locationMarkersRef.current.forEach(marker => marker.setMap(null));
@@ -127,11 +127,9 @@ const MapComponent = () => {
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-    
-    console.log('API Key:', apiKey ? 'Found' : 'Not found');
-    
+
     if (!apiKey) {
-      setError('Google Maps API key not found. Please add VITE_GOOGLE_MAPS_API_KEY to your .env file');
+      console.warn('Google Maps API key not found. Map will be disabled.');
       setLoading(false);
       return;
     }
@@ -140,12 +138,12 @@ const MapComponent = () => {
       try {
         if (mapRef.current && window.google) {
           console.log('Initializing map...');
-          
+
           // Default center (Irvine) - will be updated when user location is obtained
           const defaultCenter = { lat: 33.6846, lng: -117.8265 };
-          
-          const map = new window.google.maps.Map(mapRef.current, {
-            center: defaultCenter,
+
+          const mapOptions = {
+            center: center || defaultCenter,
             zoom: 13,
             styles: [
               {
@@ -153,18 +151,36 @@ const MapComponent = () => {
                 elementType: 'labels',
                 stylers: [{ visibility: 'off' }]
               }
-            ]
-          });
+            ],
+            disableDefaultUI: markers.length > 0, // Enable UI for vendor map, disable for simple map
+          };
 
+          const map = new window.google.maps.Map(mapRef.current, mapOptions);
           mapInstanceRef.current = map;
           geocoderRef.current = new window.google.maps.Geocoder();
-          
-          // Request user's location after map is initialized
-          getUserLocation();
-          
-          // Fetch and display locations
-          loadLocations();
-          
+
+          // Handle external markers (from props)
+          if (markers.length > 0) {
+            markers.forEach(loc => {
+              const marker = new window.google.maps.Marker({
+                position: { lat: loc.lat, lng: loc.lng },
+                map: map,
+                title: loc.name,
+                icon: {
+                  url: 'http://maps.google.com/mapfiles/ms/icons/purple-dot.png'
+                }
+              });
+
+              if (onMarkerClick) {
+                marker.addListener('click', () => onMarkerClick(loc));
+              }
+            });
+          } else {
+            // Only request user location if NOT using external markers (to avoid hijacking wizard view)
+            getUserLocation();
+            loadLocations();
+          }
+
           console.log('Map initialized successfully');
           setLoading(false);
         }
@@ -176,12 +192,10 @@ const MapComponent = () => {
     };
 
     const handleScriptError = () => {
-      console.error('Failed to load Google Maps script');
-      setError('Failed to load Google Maps. Please check your API key and internet connection.');
+      setError('Failed to load Google Maps.');
       setLoading(false);
     };
 
-    // Load Google Maps script if not already loaded
     if (!window.google) {
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
@@ -193,51 +207,32 @@ const MapComponent = () => {
     } else {
       initMap();
     }
-  }, []);
+  }, [markers, center]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-      {/* Loading State */}
+    <div style={{ position: 'relative', width: width, height: height, borderRadius: 'inherit' }}>
       {loading && (
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 1000,
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-          textAlign: 'center'
+          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+          zIndex: 1000, backgroundColor: 'white', padding: '15px', borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)', textAlign: 'center'
         }}>
-          <div>Loading Google Maps...</div>
+          <div>Loading Maps...</div>
         </div>
       )}
 
-      {/* Error State */}
       {error && (
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 1000,
-          backgroundColor: '#ffebee',
-          color: '#c62828',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-          textAlign: 'center',
-          maxWidth: '400px'
+          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+          zIndex: 1000, backgroundColor: '#ffebee', color: '#c62828', padding: '15px',
+          borderRadius: '8px', textAlign: 'center', fontSize: '0.8rem'
         }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '10px' }}>Error</div>
           <div>{error}</div>
         </div>
       )}
 
-      {/* Zip Code Input - shown when location is not available */}
-      {showZipInput && !error && !loading && (
+      {/* Zip Code Input - shown when location is not available and no external markers */}
+      {showZipInput && !error && !loading && markers.length === 0 && (
         <div style={{
           position: 'absolute',
           top: '20px',
@@ -296,7 +291,7 @@ const MapComponent = () => {
 
       {/* Map Container */}
       <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
-      
+
       {/* Location Details Panel */}
       {selectedLocation && (
         <div style={{
@@ -334,17 +329,17 @@ const MapComponent = () => {
               ×
             </button>
           </div>
-          
+
           <p style={{ margin: '8px 0', color: '#666', fontSize: '14px' }}>
             {selectedLocation.address}
           </p>
-          
+
           {selectedLocation.phoneNumber && (
             <p style={{ margin: '8px 0', color: '#666', fontSize: '14px' }}>
               <strong>Phone:</strong> {selectedLocation.phoneNumber}
             </p>
           )}
-          
+
           {selectedLocation.hours && (
             <div style={{ marginTop: '12px' }}>
               <strong style={{ fontSize: '14px', color: '#333' }}>Hours:</strong>

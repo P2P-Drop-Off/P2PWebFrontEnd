@@ -1,11 +1,14 @@
 // src/pages/CreateAccount.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { signUp } from "../functions/firebase";
+import { useListings } from "../context/ListingsContext";
+import "../css/style.css";
 import "../css/create-account.css";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
+  const { login } = useListings();
   const [step, setStep] = useState(1);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
@@ -49,10 +52,14 @@ export default function CreateAccount() {
         form.interests
       );
       console.log("Account created successfully");
-      // Navigate to login after successful account creation
+
+      // Log in to context
+      login({ name: `${form.firstName} ${form.lastName}`, email: form.email });
+
+      // Navigate to selling dashboard after successful account creation
       setTimeout(() => {
-        navigate("/login");
-      }, 1500); // Small delay to show success state
+        navigate("/selling");
+      }, 1500);
     } catch (error) {
       console.error("Error creating account:", error);
       alert(error.message.replace("Error:", ""));
@@ -61,6 +68,7 @@ export default function CreateAccount() {
       setStep(1);
     }
   };
+
 
   return (
     <div className="create-account-layout">

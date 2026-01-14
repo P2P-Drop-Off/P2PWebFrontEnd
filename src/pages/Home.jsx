@@ -11,7 +11,7 @@ import chairImg from "../assets/armchair.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
-  
+
   return (
     <div className="home-page">
       <Header />
