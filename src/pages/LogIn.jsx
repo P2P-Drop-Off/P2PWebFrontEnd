@@ -40,6 +40,13 @@ export default function LogIn() {
 
   };
 
+  const handleContinueAsGuest = () => {
+    // Set guest flag in localStorage
+    localStorage.setItem("isGuest", "true");
+    console.log("Continuing as guest");
+    navigate("/"); // Navigate to home page
+  };
+
   return (
     <div className="login-page">
       <Header />
@@ -119,6 +126,16 @@ export default function LogIn() {
               onClick={() => navigate("/create-account")}
             >
               Create Account
+            </button>
+
+            <div className="divider"></div>
+
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={handleContinueAsGuest}
+            >
+              Continue as Guest
             </button>
 
             {/* SUPPORT BOX (same as Create Account) */}
