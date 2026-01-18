@@ -13,6 +13,7 @@ export default function Header() {
 
       <nav className="top-nav">
         <a onClick={() => navigate("/create-listing")}>Create a Listing</a>
+        <a onClick={() => navigate("/selling")}>Selling Dashboard</a>
         <a onClick={() => navigate("/terms")}>Terms of Service</a>
 
         <button
