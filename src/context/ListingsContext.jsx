@@ -7,19 +7,34 @@ export const useListings = () => useContext(ListingsContext);
 export const ListingsProvider = ({ children }) => {
   // Initialize from localStorage or empty array
   const [listings, setListings] = useState(() => {
-    const saved = localStorage.getItem('listings');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('listings');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Failed to parse listings from local storage", e);
+      return [];
+    }
   });
 
   const [watching, setWatching] = useState(() => {
-    const saved = localStorage.getItem('watching');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('watching');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Failed to parse watching from local storage", e);
+      return [];
+    }
   });
 
   // Authentication State with Persistence
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('currentUser');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('currentUser');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error("Failed to parse currentUser from local storage", e);
+      return null;
+    }
   });
 
   const login = (user) => {
