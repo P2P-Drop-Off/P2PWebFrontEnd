@@ -1,25 +1,32 @@
 // src/App.jsx
 import { Routes, Route } from 'react-router-dom'
-import Map from './pages/Map'
+import MapComponent from './components/MapComponent'
 import CreateAccount from './pages/CreateAccount'
 import LogIn from './pages/LogIn'
 import Home from './pages/Home'
 import PartnerForm from './pages/PartnerForm'
+import SellingPage from './pages/SellingPage'
+import CreateListing from './pages/CreateListing'
+import { ListingsProvider } from './context/ListingsContext'
 import './App.css'
 
 function App() {
   return (
-    <Routes>
-      {/* Home now shows the Home page (the design you uploaded) */}
-      <Route path="/" element={<Home />} />
-
-      {/* Map page */}
-      <Route path="/map" element={<Map />} />
-
-      <Route path="/login" element={<LogIn />} />
-      <Route path="/create-account" element={<CreateAccount />} />
-      <Route path="/partner-form" element={<PartnerForm />} />
-    </Routes>
+    <ListingsProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/selling" element={<SellingPage />} />
+        <Route path="/create-listing" element={<CreateListing />} />
+        <Route path="/map" element={
+          <div className="app">
+            <MapComponent />
+          </div>
+        } />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/create-account" element={<CreateAccount />} />
+        <Route path="/partner-form" element={<PartnerForm />} />
+      </Routes>
+    </ListingsProvider>
   )
 }
 
