@@ -4,6 +4,7 @@ import Map from './pages/Map'
 import CreateAccount from './pages/CreateAccount'
 import LogIn from './pages/LogIn'
 import Home from './pages/Home'
+import PartnerForm from './pages/PartnerForm'
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
 
       <Route path="/login" element={<LogIn />} />
       <Route path="/create-account" element={<CreateAccount />} />
+      <Route path="/partner-form" element={<PartnerForm />} />
     </Routes>
   )
 }
