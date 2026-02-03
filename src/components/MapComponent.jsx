@@ -126,6 +126,7 @@ const MapComponent = ({ height = '100%', width = '100%', markers = [], onMarkerC
   };
 
   useEffect(() => {
+    if (mapInstanceRef.current) return; // 👈 prevent re-init
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
     if (!apiKey) {
