@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import PartnerForm from './pages/PartnerForm'
 import SellingPage from './pages/SellingPage'
 import CreateListing from './pages/CreateListing'
+import Admin from './pages/admin'
 import { ListingsProvider } from './context/ListingsContext'
 import './App.css'
 import Terms from './pages/Terms'
@@ -27,6 +28,7 @@ function App() {
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/partner-form" element={<PartnerForm />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </ListingsProvider>
   )

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signUp } from "../functions/firebase";
 import { useListings } from "../context/ListingsContext";
+import Header from "../components/Header";
 import "../css/style.css";
 import "../css/create-account.css";
 
@@ -138,27 +139,7 @@ export default function CreateAccount() {
 
       {/* Main Content */}
       <main className="main-content">
-        {/* NEW gradient header with Home button */}
-        <header className="main-header">
-          <div className="main-header-inner">
-            <div className="main-header-left">
-              <div className="header-logo-circle">P2P</div>
-              <div className="header-text">
-                <span className="header-title">Create your account to start shopping</span>
-
-              </div>
-            </div>
-
-            {/* Home button now lives in the header */}
-            <button
-              className="home-btn"
-              type="button"
-              onClick={() => navigate("/")}
-            >
-              Home
-            </button>
-          </div>
-        </header>
+        <Header />
 
         {/* Form content card */}
         <div className="content-container">
