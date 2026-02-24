@@ -10,6 +10,7 @@ import CreateListing from './pages/CreateListing'
 import Admin from './pages/admin'
 import { ListingsProvider } from './context/ListingsContext'
 import './App.css'
+import Terms from './pages/Terms'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/login" element={<LogIn />} />
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/partner-form" element={<PartnerForm />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
     </ListingsProvider>
