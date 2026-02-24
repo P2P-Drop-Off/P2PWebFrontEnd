@@ -1,6 +1,7 @@
 // src/pages/PartnerForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 import "../css/partner-form.css";
 
 export default function PartnerForm() {
@@ -87,10 +88,12 @@ export default function PartnerForm() {
 ];
 
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard-container">
+    <>
+      <Header />
+      <div className="dashboard-wrapper">
+        <div className="dashboard-container">
 
-        <div className="page-header">
+          <div className="page-header">
           <h1>Partner Store Application</h1>
           <p>We partner with buisnesses to provide convenient pickup locations for our customers. Apply to join our network of partner stores today!</p>
         </div>
@@ -243,10 +246,8 @@ export default function PartnerForm() {
           Submit Application
         </button>
       </div>
-
-
-      
-    </div>
+      </div>
+    </>
   );
 }
 

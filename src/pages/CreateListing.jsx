@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../context/ListingsContext';
 import MapComponent from '../components/MapComponent';
+import Header from '../components/Header';
 import '../css/sell.css';
 
 const CreateListing = () => {
@@ -167,7 +168,7 @@ const CreateListing = () => {
                             </div>
                         </div>
 
-                        <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="form-row">
                             <div className="field-group">
                                 <label>Price *</label>
                                 <div className="icon-input-container">
@@ -282,6 +283,7 @@ const CreateListing = () => {
 
     return (
         <div className="wizard-layout">
+            <Header />
             <header
                 className="wizard-nav"
                 style={{

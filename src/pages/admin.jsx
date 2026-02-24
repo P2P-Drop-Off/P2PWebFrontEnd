@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Header from "../components/Header";
 import "../css/admin.css";
 
 
@@ -52,7 +53,9 @@ export default function AdminDashboard() {
     const [storeView, setStoreView] = useState("manage");
 
     return (
-        <div className="admin-container">
+        <>
+            <Header />
+            <div className="admin-container">
             {/* Admin Overview */}
             <div className="section-header">
                 <h2>Admin Overview</h2>
@@ -167,6 +170,7 @@ export default function AdminDashboard() {
                     <button className="primary">+ Add Admin</button>
                 </div>
             </div>
-        </div>
+            </div>
+        </>
     );
 }
