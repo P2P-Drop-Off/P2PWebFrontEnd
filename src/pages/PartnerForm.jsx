@@ -3,6 +3,10 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import "../css/partner-form.css";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { submitPartnerApplication, db } from "../functions/firebase";
+
+
 
 export default function PartnerForm() {
   const navigate = useNavigate();
@@ -35,9 +39,6 @@ export default function PartnerForm() {
     capacity: "",
     space: "",
     itemsCanStore: "",
-    cost: "",
-    type: "",
-    commission: "",
     instructions: "",
     hours: {
       mon: { open: "", close: "", closed: false },
@@ -100,13 +101,7 @@ export default function PartnerForm() {
           }
         }
 
-        if (name === "commission") {
-          const num = Number(value);
-          if (value && (num < 0 || num > 100)) {
-            errorMsg = "Commission must be between 0 and 100.";
-          }
-        }
-
+        
         setErrors((prev) => ({
           ...prev,
           [name]: errorMsg,
@@ -164,76 +159,67 @@ export default function PartnerForm() {
   };
 
   const handleSubmit = async () => {
-      const newErrors = {};
+        const newErrors = {};
 
-      /* Required Fields */
-      REQUIRED_FIELDS.forEach((field) => {
-        if (!form[field] || form[field].toString().trim() === "") {
-          newErrors[field] = "This field is required.";
-        }
-      });
-
-      /* Validate Hours */
-      const hoursError = validateHours();
-      if (hoursError) {
-        newErrors.hours = hoursError;
-      }
-      /* Validate Email Format */
-      const emailRegex =
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
-
-      if (!emailRegex.test(form.email.trim())) {
-        newErrors.email = "Please enter a valid email address.";
-      }
-      /* Validate Phone Number */
-      const digitsOnly = form.phone.replace(/\D/g, "");
-      if (form.phone && digitsOnly.length !== 10) {
-        newErrors.phone = "Phone number must contain exactly 10 digits.";
-      }
-
-      /* ZIP Code Validation*/
-      if (form.zip && !/^\d{5}$/.test(form.zip)) {
-        newErrors.zip = "ZIP code must be 5 digits.";
-      }
-
-      /* Commission Validation */
-      if (form.commission) {
-        const num = Number(form.commission);
-        if (num < 0 || num > 100) {
-          newErrors.commission = "Commission must be between 0 and 100.";
-        }
-      }
-
-
-      setErrors(newErrors);
-
-      if (Object.keys(newErrors).length > 0) {
-        setTimeout(() => {
-          const firstErrorElement = document.querySelector(".input-error, .section-error");
-          if (firstErrorElement) {
-            firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        // --- 1. Validate required fields ---
+        REQUIRED_FIELDS.forEach((field) => {
+          if (!form[field] || form[field].toString().trim() === "") {
+            newErrors[field] = "This field is required.";
           }
-        }, 100);
-        return;
-      }
-
-      try {
-        const response = await fetch("/api/partners", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
         });
 
-        if (response.ok) {
-          alert("Application submitted!");
-          navigate("/dashboard");
-        } else {
-          alert("Failed to submit application");
+        // --- 2. Validate business hours ---
+        const hoursError = validateHours();
+        if (hoursError) newErrors.hours = hoursError;
+
+        // --- 3. Validate email format ---
+        const emailRegex =
+          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+        if (!emailRegex.test(form.email.trim())) {
+          newErrors.email = "Please enter a valid email address.";
         }
-      } catch (error) {
-        console.error(error);
-        alert("Error submitting application");
-      }
+
+        // --- 4. Validate phone ---
+        const digitsOnly = form.phone.replace(/\D/g, "");
+        if (form.phone && digitsOnly.length !== 10) {
+          newErrors.phone = "Phone number must contain exactly 10 digits.";
+        }
+
+        // --- 5. Validate ZIP code ---
+        if (form.zip && !/^\d{5}$/.test(form.zip)) {
+          newErrors.zip = "ZIP code must be 5 digits.";
+        }
+
+        // --- 6. Validate commission ---
+        if (form.commission) {
+          const num = Number(form.commission);
+          if (num < 0 || num > 100) {
+            newErrors.commission = "Commission must be between 0 and 100.";
+          }
+        }
+
+        // --- 7. Set errors & scroll to first ---
+        setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) {
+          setTimeout(() => {
+            const firstErrorElement = document.querySelector(
+              ".input-error, .section-error"
+            );
+            if (firstErrorElement)
+              firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 100);
+          return;
+        }
+
+        // --- 8. Submit to Firebase ---
+        try {
+          await submitPartnerApplication(form); 
+          alert("Application submitted!");
+          navigate("/"); // Redirect to homepage -- consider changing to a confirmation page, show next steps
+        } catch (error) {
+          console.error(error);
+          alert("Error submitting application: " + error.message);
+        }
   };
 
   const US_STATES = [

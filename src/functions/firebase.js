@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, collection, addDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDP1_yG4H6ge9NoKC3qvPtnQnQSUf5_Ncg",
@@ -64,6 +65,19 @@ export const logIn = (email, password) => {
 
 export const logOut = () => {
   return signOut(auth);
+};
+
+export const submitPartnerApplication = async (form) => {
+  try {
+    const docRef = await addDoc(collection(db, "partners"), {
+      ...form,
+      createdAt: new Date().toISOString(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error submitting partner application:", error);
+    throw error;
+  }
 };
 
 export { auth, db };
