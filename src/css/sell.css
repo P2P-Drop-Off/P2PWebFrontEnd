@@ -580,6 +580,7 @@
     border: 1px solid var(--border-color);
     background: #F7F9FF;
     font-size: 1rem;
+    font-family: inherit;
     outline: none;
     resize: vertical;
     min-height: 120px;
