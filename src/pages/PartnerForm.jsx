@@ -376,7 +376,7 @@ export default function PartnerForm() {
             </div>
           </SectionCard>
 
-          {/* Contact + Business Hours Side-by-Side */}
+{/* Contact + Business Hours Side-by-Side */}
 <div className="grid-2">
   
   {/* Contact Info */}

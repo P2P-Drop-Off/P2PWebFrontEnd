@@ -148,16 +148,27 @@ label {
 /* Upgraded hours row with separate open/close times and closed toggle */
 .hours-row-upgraded {
   display: grid;
-  grid-template-columns: 60px 120px 30px 120px 100px;
+  grid-template-columns: 60px 120px 30px 120px 100px; 
   align-items: center;
   gap: 10px;
 }
-
 .hours-row-upgraded .input {
+  width: 100%; /* fill grid cell */
+  min-width: 0;
   font-family: inherit;
-  font-size: 14px;
-  background: #f9fafb;
-  color: #111827;
+}
+
+/* Mobile View of Hours */
+@media (max-width: 800px) {
+  .hours-row-upgraded {
+    grid-template-columns: 50px 1fr 20px 1fr auto; 
+    gap: 8px;
+  }
+
+  .hours-row-upgraded .input {
+    width: 100%; 
+    min-width: 0; /* allows the input to shrink but stay in its column */
+  }
 }
 
 .time-placeholder {
@@ -299,3 +310,25 @@ label {
   margin-bottom: 12px;
   font-weight: 500;
 }
+/* Fix Button Appearance on Mobile */
+@media (max-width: 600px) {
+  .form-actions {
+    flex-direction: column;  
+    align-items: center;
+    gap: 12px;
+  }
+
+  .form-actions .btn-primary,
+  .form-actions .btn-secondary {
+    width: 100%;
+    max-width: 170px; 
+  }
+}
+
+/* Fixes grid-2, will stack vertically on small screens */
+@media (max-width: 800px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
