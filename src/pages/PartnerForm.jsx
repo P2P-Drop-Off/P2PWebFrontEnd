@@ -167,7 +167,7 @@ export default function PartnerForm() {
             <p>
               We partner with businesses to provide convenient pickup
               locations for our customers. Apply to join our network of partner
-              stores today!
+              stores today!<br /><i>Upon submission of this application, our team will review your information and reach out with next steps. </i>
             </p>
           </div>
 

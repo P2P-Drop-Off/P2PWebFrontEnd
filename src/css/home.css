@@ -27,12 +27,30 @@
 /*          TOP NAV AREA           */
 /* ─────────────────────────────── */
 
-.top-nav {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  font-size: 14px;
-}
+
+  .top-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(280px, 85vw);
+    height: 100vh;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 80px 24px 24px;
+    z-index: 1001;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.3s ease, visibility 0.3s ease;
+    font-size: 16px;
+  }
+
+  .top-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+  }
 
 /* Navigation links */
 .top-nav a {
@@ -194,7 +212,7 @@
 /* ─────────────────────────────── */
 
 .header-burger {
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -234,46 +252,23 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-@media (max-width: 768px) {
-  .header-burger {
-    display: flex;
-  }
+.header-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  animation: overlay-in 0.2s ease;
+}
 
-  .header-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    z-index: 1000;
-    animation: overlay-in 0.2s ease;
-  }
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 
   @keyframes overlay-in {
     from { opacity: 0; }
     to { opacity: 1; }
-  }
-
-  .top-nav {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: min(280px, 85vw);
-    height: 100vh;
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: 80px 24px 24px;
-    z-index: 1001;
-    transform: translateX(100%);
-    visibility: hidden;
-    transition: transform 0.3s ease, visibility 0.3s ease;
-    font-size: 16px;
-  }
-
-  .top-nav.is-open {
-    transform: translateX(0);
-    visibility: visible;
   }
 
   .top-nav a {
@@ -312,7 +307,6 @@
     box-shadow: none;
     border: 1px solid rgba(0, 0, 0, 0.08);
   }
-}
 
 @media (max-width: 768px) {
   .site-header {
@@ -411,4 +405,11 @@
 @media (max-width: 980px) {
   .listing-container { grid-template-columns: 1fr; gap:28px; margin:24px; }
   .media-wrap .listing-img { height:260px; }
+}
+
+/* Force hamburger header to always show */
+.header-burger {
+  display: flex !important;
+  position: relative;
+  z-index: 1100;
 }
