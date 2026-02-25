@@ -47,6 +47,12 @@
   gap: 20px;
 }
 
+.contact-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -133,6 +139,11 @@ label {
   color: #6b7280;
 }
 
+.extra-info {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
 
 /* Upgraded hours row with separate open/close times and closed toggle */
 .hours-row-upgraded {
@@ -204,18 +215,18 @@ label {
 }
 /* Sticky footer for Cancel & Submit buttons */
 .form-actions {
-  position: fixed; /* stick to bottom of viewport */
+  position: fixed; /* stick to bottom of screen */
   bottom: 0;
   left: 0;
   width: 100%;
-  background: #f9f9f9; /* match form's card background */
+  background: #f9f9f9;
   padding: 15px 0;
   display: flex;
   justify-content: center; /* center horizontally */
   gap: 20px;
-  border-top: 1px solid #ddd; /* subtle separation */
+  border-top: 1px solid #ddd;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-  z-index: 1000; /* keep above content */
+  z-index: 1000;
 }
 
 /* Buttons inside footer */
@@ -233,7 +244,7 @@ label {
 
 /* Primary button (Submit) */
 .form-actions .btn-primary {
-  background-color: #6f4fff; /* matches your screenshot */
+  background-color: #6f4fff;
   color: #fff;
 }
 
@@ -243,7 +254,7 @@ label {
 
 /* Secondary button (Cancel) */
 .form-actions .btn-secondary {
-  background-color: #fff; /* matches screenshot */
+  background-color: #fff;
   color: #333;
   border: 1px solid #ddd;
 }
@@ -268,4 +279,23 @@ label {
     width: 80%; /* full-width on mobile */
     max-width: 300px;
   }
+}
+
+/* Error styles */
+.input-error {
+  border-color: #ef4444 !important;
+  background: #fef2f2;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.section-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 12px;
+  font-weight: 500;
 }
