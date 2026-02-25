@@ -1,11 +1,26 @@
 // src/pages/PartnerForm.jsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import "../css/partner-form.css";
 
 export default function PartnerForm() {
   const navigate = useNavigate();
+
+  const [errors, setErrors] = useState({});
+  const firstErrorRef = useRef(null);
+
+  const REQUIRED_FIELDS = [
+    "storeName",
+    "street",
+    "city",
+    "state",
+    "zip",
+    "phone",
+    "email",
+    "submittersName",
+    "role"
+  ];
 
   const [form, setForm] = useState({
     storeName: "",
@@ -16,10 +31,10 @@ export default function PartnerForm() {
     zip: "",
     phone: "",
     email: "",
-    manager: "",
+    submittersName: "",
     capacity: "",
     space: "",
-    dimensions: "",
+    itemsCanStore: "",
     cost: "",
     type: "",
     commission: "",
@@ -33,13 +48,71 @@ export default function PartnerForm() {
       sat: { open: "", close: "", closed: false },
       sun: { open: "", close: "", closed: false },
     },
-    amenities: [], // <-- Track selected amenities
+    amenities: [],
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+      const { name, value } = e.target;
+
+      let updatedValue = value;
+
+      /* Phone Number Formatting: (###)-###-#### */
+      if (name === "phone") {
+        const digits = value.replace(/\D/g, "").slice(0, 10);
+
+        if (digits.length >= 6) {
+          updatedValue = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+        } else if (digits.length >= 3) {
+          updatedValue = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+        } else {
+          updatedValue = digits;
+        }
+      }
+
+      setForm((prev) => ({ ...prev, [name]: updatedValue }));
+
+      const validateField = (name, value) => {
+        let errorMsg = "";
+
+        if (name === "phone") {
+          const digits = value.replace(/\D/g, "");
+          if (digits.length !== 10) {
+            errorMsg = "Phone number must be exactly 10 digits.";
+          }
+        }
+
+        if (name === "email") {
+          const trimmed = value.trim();
+
+          const emailRegex =
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+
+          if (!trimmed) {
+            errorMsg = "Email is required.";
+          } else if (!emailRegex.test(trimmed)) {
+            errorMsg = "Please enter a valid email address (e.g. store@example.com).";
+          }
+        }
+
+        if (name === "zip") {
+          if (!/^\d{5}$/.test(value)) {
+            errorMsg = "ZIP code must be 5 digits.";
+          }
+        }
+
+        if (name === "commission") {
+          const num = Number(value);
+          if (value && (num < 0 || num > 100)) {
+            errorMsg = "Commission must be between 0 and 100.";
+          }
+        }
+
+        setErrors((prev) => ({
+          ...prev,
+          [name]: errorMsg,
+        }));
+      };
+    };
 
   const handleHoursChange = (day, field, value) => {
     setForm((prev) => ({
@@ -52,6 +125,20 @@ export default function PartnerForm() {
         },
       },
     }));
+  };
+  /* Buisness Hour Validation */
+  const validateHours = () => {
+    for (let [day, data] of Object.entries(form.hours)) {
+      if (!data.closed) {
+        if (!data.open || !data.close) {
+          return "Every day must have opening and closing times or be marked closed.";
+        }
+        if (data.close <= data.open) {
+          return "Closing time must be later than opening time.";
+        }
+      }
+    }
+    return "";
   };
 
   const toggleClosed = (day) => {
@@ -77,30 +164,76 @@ export default function PartnerForm() {
   };
 
   const handleSubmit = async () => {
-    try {
-      const requiredFields = ["storeName", "street", "city", "state", "zip", "phone", "email"];
+      const newErrors = {};
 
-      for (let field of requiredFields) {
-        if (!form[field]) {
-          alert("Please fill out all required fields.");
-          return;
+      /* Required Fields */
+      REQUIRED_FIELDS.forEach((field) => {
+        if (!form[field] || form[field].toString().trim() === "") {
+          newErrors[field] = "This field is required.";
+        }
+      });
+
+      /* Validate Hours */
+      const hoursError = validateHours();
+      if (hoursError) {
+        newErrors.hours = hoursError;
+      }
+      /* Validate Email Format */
+      const emailRegex =
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+
+      if (!emailRegex.test(form.email.trim())) {
+        newErrors.email = "Please enter a valid email address.";
+      }
+      /* Validate Phone Number */
+      const digitsOnly = form.phone.replace(/\D/g, "");
+      if (form.phone && digitsOnly.length !== 10) {
+        newErrors.phone = "Phone number must contain exactly 10 digits.";
+      }
+
+      /* ZIP Code Validation*/
+      if (form.zip && !/^\d{5}$/.test(form.zip)) {
+        newErrors.zip = "ZIP code must be 5 digits.";
+      }
+
+      /* Commission Validation */
+      if (form.commission) {
+        const num = Number(form.commission);
+        if (num < 0 || num > 100) {
+          newErrors.commission = "Commission must be between 0 and 100.";
         }
       }
-      const response = await fetch("/api/partners", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (response.ok) {
-        alert("Application submitted!");
-        navigate("/dashboard"); // or wherever you want
-      } else {
-        alert("Failed to submit application");
+
+
+      setErrors(newErrors);
+
+      if (Object.keys(newErrors).length > 0) {
+        setTimeout(() => {
+          const firstErrorElement = document.querySelector(".input-error, .section-error");
+          if (firstErrorElement) {
+            firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 100);
+        return;
       }
-    } catch (error) {
-      console.error(error);
-      alert("Error submitting application");
-    }
+
+      try {
+        const response = await fetch("/api/partners", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+
+        if (response.ok) {
+          alert("Application submitted!");
+          navigate("/dashboard");
+        } else {
+          alert("Failed to submit application");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error submitting application");
+      }
   };
 
   const US_STATES = [
@@ -171,8 +304,8 @@ export default function PartnerForm() {
             </p>
           </div>
 
-          {/* Basic Information */}
-          <SectionCard title="Basic Information">
+          {/* Store Information */}
+          <SectionCard title="Store Information">
             <div className="grid-2">
               <Input
                 label="Store Name *"
@@ -180,6 +313,7 @@ export default function PartnerForm() {
                 placeholder="e.g. Downtown Center"
                 value={form.storeName}
                 onChange={handleChange}
+                error={errors.storeName}
               />
               <Select
                 label="Store Type"
@@ -200,6 +334,7 @@ export default function PartnerForm() {
               placeholder="e.g. 123 Main St"
               value={form.street}
               onChange={handleChange}
+              error={errors.street}
             />
             <div className="grid-3">
               <Input
@@ -208,6 +343,7 @@ export default function PartnerForm() {
                 placeholder="e.g. San Clemente"
                 value={form.city}
                 onChange={handleChange}
+                error={errors.city}
               />
               <div className="form-group">
                 <label>State *</label>
@@ -215,15 +351,19 @@ export default function PartnerForm() {
                   name="state"
                   value={form.state}
                   onChange={handleChange}
-                  className="input"
-                >
-                  {US_STATES.map((state) => (
-                    <option key={state.value} value={state.value}>
-                      {state.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  error={errors.state}
+                  className={`input ${errors.state ? "input-error" : ""}`}
+                  >
+                    {US_STATES.map((state) => (
+                      <option key={state.value} value={state.value}>
+                        {state.label}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.state && (
+                    <span className="error-text">{errors.state}</span>
+                  )}
+                </div>
 
               <Input
                 label="Zip Code *"
@@ -231,110 +371,57 @@ export default function PartnerForm() {
                 placeholder="e.g. 92672"
                 value={form.zip}
                 onChange={handleChange}
+                error={errors.zip}
               />
             </div>
           </SectionCard>
 
-          {/* Contact Info */}
-          <SectionCard title="Contact Information">
-            <div className="grid-3">
-              <Input
-                label="Phone *"
-                name="phone"
-                placeholder="(212) 555-0123"
-                value={form.phone}
-                onChange={handleChange}
-              />
-              <Input
-                label="Email *"
-                name="email"
-                placeholder="store@company.com"
-                value={form.email}
-                onChange={handleChange}
-              />
-              <Input
-                label="Manager Name"
-                name="manager"
-                placeholder="John Smith"
-                value={form.manager}
-                onChange={handleChange}
-              />
-            </div>
-          </SectionCard>
+          {/* Contact + Business Hours Side-by-Side */}
+<div className="grid-2">
+  
+  {/* Contact Info */}
+  <SectionCard title="Contact Information">
+    <div className="contact-stack">
+      <Input
+        label="Your Name *"
+        name="submittersName"
+        placeholder="John Smith"
+        value={form.submittersName}
+        onChange={handleChange}
+        error={errors.submittersName}
+      />
+      <Input
+        label="Your Role *"
+        name="role"
+        placeholder="e.g. Store Manager"
+        value={form.role}
+        onChange={handleChange}
+        error={errors.role}
+      />
+      <Input
+        label="Phone *"
+        name="phone"
+        placeholder="(212) 555-0123"
+        value={form.phone}
+        onChange={handleChange}
+        error={errors.phone}
+      />
+      <Input
+        label="Email *"
+        name="email"
+        placeholder="store@company.com"
+        value={form.email}
+        onChange={handleChange}
+        error={errors.email}
+      />
+    </div>
+  </SectionCard>
 
-          {/* Capacity & Partnership */}
-          <div className="grid-2">
-            <SectionCard title="Capacity & Storage">
-              <div className="grid-2">
-                <Input
-                  label="Item Capacity"
-                  name="capacity"
-                  placeholder="200"
-                  value={form.capacity}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="Space (sq ft)"
-                  name="space"
-                  placeholder="500"
-                  value={form.space}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="Max Dimensions"
-                  name="dimensions"
-                  placeholder="48x48x48"
-                  value={form.dimensions}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="Cost ($/mo)"
-                  name="cost"
-                  placeholder="15"
-                  value={form.cost}
-                  onChange={handleChange}
-                />
-              </div>
-            </SectionCard>
-
-            <SectionCard title="Partnership Details">
-              <div className="grid-2">
-                  <Select
-                    label="Type"
-                    name="type"
-                    value={form.type}
-                    onChange={handleChange}
-                    options={["Revenue Share", "Flat Rate"]}
-                  />
-
-                  {form.type === "Revenue Share" && (
-                    <Input
-                      label="Commission (%)"
-                      name="commission"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={form.commission}
-                      onChange={handleChange}
-                    />
-                  )}
-                  {form.type === "Flat Rate" && (
-                    <Input
-                      label="Commission (%)"
-                      name="commission"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={form.commission}
-                      onChange={handleChange}
-                    />
-                  )}
-                </div>
-            </SectionCard>
-          </div>
-
-          <div className="hours-and-features">
-            <SectionCard title="Business Hours">
+  {/* Business Hours */}
+  <SectionCard title="Business Hours">
+    {errors.hours && (
+      <div className="section-error">{errors.hours}</div>
+              )}
               <div className="hours-list">
                 {[
                   { label: "Mon", key: "mon" },
@@ -351,7 +438,7 @@ export default function PartnerForm() {
                     <div key={day.key} className="hours-row-upgraded">
                       <span className="day-label">{day.label}</span>
 
-                     {dayData.closed ? (
+                      {dayData.closed ? (
                         <>
                           <span className="closed-label">Closed</span>
                           <span className="time-placeholder">to</span>
@@ -392,9 +479,39 @@ export default function PartnerForm() {
               </div>
             </SectionCard>
 
+          </div>
+
+          
+
+
+          {/* Capacity & Partnership */}
+          <div className="grid-2">
+            <SectionCard title="Capacity & Storage">
+              <div className="extra-info">
+                <span><i>How much space could you dedicate to Drop 'N Off items?</i></span>
+              </div>
+              <div className="grid-2">
+                <Input
+                  label="Space (estimated sq ft)"
+                  name="space"
+                  placeholder="100"
+                  value={form.space}
+                  onChange={handleChange}
+                />
+                <Select
+                  label="Items You Can Store"
+                  name="itemsCanStore"
+                  placeholder="Select size of items"
+                  value={form.itemsCanStore}
+                  onChange={handleChange}
+                  options={["Small", "Medium ", "Large"]}
+                />
+              </div>
+            </SectionCard>
+
             <SectionCard title="Amenities & Features">
               <div className="amenities-grid">
-                {["Parking", "Accessible", "Climate Control", "Security"].map((item) => (
+                {["Dedicated Parking", "Contactless Payment", "Free WiFi", "Climate Control", "Pet Friendly", "Wheelchair Accessible"].map((item) => (
                   <button
                     type="button"
                     key={item}
@@ -407,6 +524,8 @@ export default function PartnerForm() {
               </div>
             </SectionCard>
           </div>
+
+          
 
           {/* Special Instructions */}
           <SectionCard title="Special Instructions">
@@ -451,11 +570,15 @@ function SectionCard({ title, children }) {
   );
 }
 
-function Input({ label, ...props }) {
+function Input({ label, error, ...props }) {
   return (
     <div className="form-group">
       <label>{label}</label>
-      <input className="input" {...props} />
+      <input
+        className={`input ${error ? "input-error" : ""}`}
+        {...props}
+      />
+      {error && <span className="error-text">{error}</span>}
     </div>
   );
 }
