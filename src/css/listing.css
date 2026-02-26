@@ -1,0 +1,251 @@
+/* Listing Page Layout */
+
+.listing-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #b2b4d3a2, #a8c3e59e);
+  display: flex;
+  flex-direction: column;
+}
+
+.listing-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 20px;
+}
+
+/* Listing Card */
+
+.listing-card {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Image Section */
+
+.media-wrap {
+  width: 100%;
+  border-radius: 22px;
+  padding: 30px;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}
+
+.listing-image {
+  width: 100%;
+  max-width: 450px;
+  height: 450px; 
+  object-fit: cover;
+  border-radius: 22px;
+  cursor: pointer;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.listing-image:hover {
+  transform: scale(1.02);
+}
+
+/* Body Section */
+
+.listing-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.listing-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.price-badge {
+  background: #e8d9ff;
+  color: #7b2ff7;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.description {
+  color: #4a5568;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* Pickup Section */
+
+.pickup h4 {
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #2d3436;
+}
+
+.pickup-card {
+  background: #e9edf2;
+  padding: 18px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pickup-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #3a3f44;
+}
+
+.pickup-dot {
+  width: 10px;
+  height: 10px;
+  background: #9c4dff;
+  border-radius: 50%;
+}
+
+/* Map Section */
+
+.map-preview {
+  background: #dbe1ea;
+  height: 120px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-pin {
+  font-size: 2rem;
+}
+
+.view-map {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.view-map:hover {
+  text-decoration: underline;
+}
+
+/* Continue Button */
+
+.continue-btn {
+  margin-top: 10px;
+  padding: 16px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(90deg, #4facfe, #9c4dff);
+  box-shadow: 0 8px 20px rgba(156, 77, 255, 0.3);
+  transition: all 0.25s ease;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(156, 77, 255, 0.4);
+}
+
+/* Responsive */
+
+@media (min-width: 900px) {
+  .listing-card {
+    flex-direction: row;
+    max-width: 1000px;
+  }
+
+  .media-wrap {
+    width: 50%;
+    padding: 40px;
+  }
+
+  .listing-body {
+    width: 50%;
+    padding: 40px;
+  }
+
+  .listing-image {
+    max-height: 500px;
+  }
+}
+
+/* Image Modal Styles */
+
+/* Modal background */
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+/* Modal image container */
+.modal-content img {
+  max-width: 90vw;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  border-radius: 18px;
+  display: block;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+}
+.modal-content {
+  position: relative;
+  display: inline-block;
+}
+
+/* Modal close button */
+.close-modal {
+  position: absolute;
+  top: -35px;     
+  right: -25px;
+  background: none;
+  border: none;
+  font-size: 45px;
+  line-height: 1;
+  color: #bbb;
+  cursor: pointer;
+  padding: 0;
+}
+
+.close-modal:hover {
+  color: #888;
+  transform: scale(1.1);
+}
+
+.close-modal:focus {
+  outline: none;
+  box-shadow: none;
+}
