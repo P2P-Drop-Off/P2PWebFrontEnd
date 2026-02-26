@@ -59,9 +59,9 @@ export default function Header() {
         />
       )}
       <nav className={`top-nav ${menuOpen ? 'is-open' : ''}`}>
-        <a onClick={() => goTo("/partner-form")}>Partner Application</a>
         <a onClick={() => goTo("/create-listing")}>Create a Listing</a>
         <a onClick={() => goTo("/selling")}>Selling Dashboard</a>
+        <a onClick={() => goTo("/partner-form")}>Partner Application</a>
         <a onClick={() => goTo("/terms")}>Terms of Service</a>
 
         {currentUser ? (

@@ -28,11 +28,12 @@
 /* ─────────────────────────────── */
 
 
+
   .top-nav {
     position: fixed;
     top: 0;
     right: 0;
-    width: min(280px, 85vw);
+    width: 280px;
     height: 100vh;
     background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
     box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
@@ -331,7 +332,7 @@
 }
 
 .intro-card {
-  position: relative;            /* Needed to allow ::before overlay */
+  position: relative;
   padding: 40px;
   border-radius: 16px;
 
@@ -412,4 +413,203 @@
   display: flex !important;
   position: relative;
   z-index: 1100;
+}
+
+.home-container {
+  max-width: 1000px;
+  margin: 0 auto 80px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  overflow-wrap: break-word;
+}
+
+/* MAIN INFO */
+
+.main-info {
+  text-align: center;
+  padding: 15px 15px;
+}
+
+.main-info h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.main-info-sub {
+  margin-top: 16px;
+  font-size: 1.2rem;
+  color: #4b5563;
+}
+
+/* HOME CARD */
+
+.home-card {
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Tagline */
+
+.tagline {
+  font-weight: 700;
+  font-size: 1.1rem;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Accordion Button */
+
+.accordion-btn {
+  width: 100%;
+  padding: 16px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.accordion-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Accordion Content */
+
+.accordion-content.clean {
+  padding: 10px 5px 5px;
+  color: #374151;
+}
+
+/* Steps */
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.step span {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  font-size: 0.9rem;
+
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: white;
+}
+
+.step p {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  color: #374151;
+}
+
+/* Learn More */
+
+.learn-more-btn {
+  margin-top: 20px;
+  margin-left: auto;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.learn-more-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Nested Content */
+
+.nested-content {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f9f9ff, #f2f6ff);
+}
+
+/* Why Drop 'N Off List */
+
+.whyDNO-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.whyDNO-list li {
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.whyDNO-intro {
+  margin-bottom: 16px;
+  color: #131314;
+  line-height: 1.6;
+  font-weight: 550;
+}
+
+.accordion-btn {
+  width: 100%;
+  padding: 16px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.accordion-arrow {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 8px solid white;
+  transition: transform 0.25s ease;
+}
+
+/* Rotate when open */
+.accordion-btn.open .accordion-arrow {
+  transform: rotate(180deg);
 }

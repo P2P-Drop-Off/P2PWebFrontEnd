@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import React from 'react';
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import '../css/home.css';
@@ -8,75 +8,177 @@ import '../css/style.css'; // shared tokens
 // update path or replace with your real image in src/assets
 import chairImg from "../assets/armchair.jpg";
 
-
 export default function Home() {
-  const navigate = useNavigate();
+  const [openSections, setOpenSections] = useState({
+    how: false,
+    rentals: false,
+    safety: false,
+    whyDNO: false,
+  });
+
+  const [showRentalDetails, setShowRentalDetails] = useState(false);
+
+  const toggle = (section) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
 
   return (
+    
     <div className="home-page">
       <Header />
 
-      <main className="listing-container">
-        <section className="intro-card" aria-labelledby="welcome-heading">
-          <h2 id="welcome-heading">Welcome to P2P</h2>
-          <p className="lead">
-            P2P is your trusted peer-to-peer marketplace for secure second-hand transactions.
-            We connect buyers and sellers in a safe, transparent environment.
-          </p>
-          <p className="more">
-            Every transaction is protected — your items, your terms, our support.
-          </p>
+      <main className="home-container">
 
-          <div className="dots" aria-hidden="true">
-            <span className="dot dot--active" />
-            <span className="dot" />
-            <span className="dot" />
-          </div>
-        </section>
+      {/* Main */}
+      <section className="main-info">
+        <h1>Drop 'N Off</h1>
+        <p className="main-info-sub">
+          The safer way to buy and sell — powered by trusted local businesses.
+        </p>
+      </section>
 
-        <aside className="listing-card" aria-label="Product details">
-          <div className="media-wrap">
-            <img src={chairImg} alt="Vintage Armchair" className="listing-image" />
-          </div>
+      {/* MISSION CARD */}
+      <section className="home-card">
+        <h2>What is Drop 'N Off?</h2>
+        <p>
+          Drop 'N Off is a secure peer-to-peer marketplace designed to eliminate
+          awkward meetups and safety risks.
+        </p>
+        <p>
+          Instead of meeting strangers, transactions are completed through
+          verified partner businesses in your community.
+        </p>
+        <div className="tagline">
+          Drop off. Get paid.
+        </div>
+      </section>
 
-          <div className="listing-body">
-            <div className="title-row">
-              <h3 className="listing-title">Vintage Armchair</h3>
-              <div className="price-badge">$85</div>
+      {/* HOW IT WORKS */}
+      <section className="home-card">
+        <button
+          className={`accordion-btn ${openSections.how ? "open" : ""}`}
+          onClick={() => toggle("how")}
+        >
+          How It Works
+          <span className="accordion-arrow" />
+        </button>
+
+        {openSections.how && (
+          <div className="accordion-content clean">
+            <div className="step">
+              <span>1</span>
+              <p>Seller creates a listing for their item, which generates a unique link.</p>
             </div>
+            <div className="step">
+              <span>2</span>
+              <p>Seller sends the unique link to a potential buyer.</p>
+            </div>
+            <div className="step">
+              <span>3</span>
+              <p>Buyer confirms the listing details and accepts the transaction.</p>
+            </div>
+            <div className="step">
+              <span>4</span>
+              <p>Seller drops item off at a verified partner location.</p>
+            </div>
+            <div className="step">
+              <span>5</span>
+              <p>Buyer pays and picks the item up at their convenience.</p>
+            </div>
+          </div>
+        )}
+      </section>
 
-            <p className="description">
-              Beautiful mid-century modern armchair in excellent condition. Comfortable velvet
-              upholstery with wooden legs. Perfect for a reading nook or living room accent piece.
+      {/* RENTALS */}
+      <section className="home-card">
+        <button
+          className={`accordion-btn ${openSections.rentals ? "open" : ""}`}
+          onClick={() => toggle("rentals")}
+        >
+          Rentals (Coming Soon!)
+          <span className="accordion-arrow" />
+        </button>
+
+        {openSections.rentals && (
+          <div className="accordion-content clean">
+            <h3>Earn Passive Income with Drop 'N Off Rentals</h3>
+            <p>
+              Rent your items out and make money! Trusted businesses handle storage,
+              logistics, and management.
             </p>
 
-            <div className="pickup">
-              <h4>Pickup Location</h4>
+            <button
+              className="learn-more-btn"
+              onClick={() => setShowRentalDetails(!showRentalDetails)}
+            >
+              Learn More
+            </button>
 
-              <div className="pickup-card">
-                <div className="pickup-header">
-                  <span className="pickup-dot" aria-hidden="true" />
-                  <div>Downtown Area, Main Street</div>
+            {showRentalDetails && (
+              <div className="nested-content">
+                <div className="step">
+                  <span>1</span>
+                  <p>Select a participating business to manage your rental item.</p>
                 </div>
-
-                <div className="map-preview" role="img" aria-label="pickup location map preview">
-                  {/* Replace with MapComponent if you want interactive map */}
-                  <div className="map-pin">📍</div>
+                <div className="step">
+                  <span>2</span>
+                  <p>
+                    For a small monthly fee + percentage of rental cost, your rental item is fully managed.
+                  </p>
                 </div>
+                <div className="step">
+                  <span>3</span>
+                  <p>Each time your item is rented out, you earn worry-free passive income!</p>
+                </div>
+              </div>
 
-                <button className="view-map" onClick={() => navigate('/map')}>View on map</button>
+
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* WHY DROP N OFF */}
+      <section className="home-card">
+        <button
+          className={`accordion-btn ${openSections.whyDNO ? "open" : ""}`}
+          onClick={() => toggle("whyDNO")}
+        >
+          Why Drop 'N Off?
+          <span className="accordion-arrow" />
+        </button>
+
+        {openSections.whyDNO && (
+            <div className="accordion-content clean">
+            <h3>Second-hand shopping <i>simplified.</i></h3>
+            <p><b></b>Second-handing shopping is cheaper and more sustainable than buying new, but it can be uncomfortable <br></br> (and even risky) to coordinate meet ups with strangers.<br></br><br></br><h4>That's where Drop 'N Off comes in:</h4><br></br></p>
+            <div className="whyDNO-list">
+              <div className="step">
+                  <span>✓</span>
+                  <p>Partner businesses are vetted and verified for safety and reliability.</p>
+              </div>
+              <div className="step">
+                  <span>✓</span>
+                  <p>All items are verified and inspected by partner businesses before being accepted.</p>
+              </div>
+              <div className="step">
+                  <span>✓</span>
+                  <p>Items will be stored securely and can be picked up at your convenience.</p>
+              </div>
+              <div className="step">
+                  <span>✓</span>
+                  <p>The only strangers you will meet are the staff at our trusted local partner businesses who manage <br></br>Drop 'N Off transactions.</p>
               </div>
             </div>
 
-            <button
-              className="continue-btn"
-              onClick={() => alert('Continue flow (checkout / confirm pickup)')}
-            >
-              Continue
-            </button>
           </div>
-        </aside>
-      </main>
+        )}
+      </section>
+
+    </main>
 
       <footer className="site-footer">
         <p>© {new Date().getFullYear()} Peer to Peer Drop Off · All rights reserved</p>
