@@ -9,6 +9,7 @@ import '../css/style.css'; // shared tokens
 import chairImg from "../assets/armchair.jpg";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [openSections, setOpenSections] = useState({
     how: false,
     rentals: false,
@@ -176,6 +177,21 @@ export default function Home() {
 
           </div>
         )}
+      </section>
+
+      {/* CALL TO ACTION SECTION */}
+      <section className="cta-box">
+        <h2 className="cta-title">Ready to Get Started?</h2>
+        <p className="cta-subtext">
+          Join the Drop 'N Off community and experience a better way to buy and sell locally.
+        </p>
+
+        <button
+          className="cta-button"
+          onClick={() => navigate("/create-account")}
+        >
+          Create Your Account
+        </button>
       </section>
 
     </main>
