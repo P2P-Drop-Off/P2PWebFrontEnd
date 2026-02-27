@@ -197,7 +197,10 @@ const MapComponent = ({ height = '100%', width = '100%', markers = [], onMarkerC
       setLoading(false);
     };
 
-    if (!window.google) {
+    if (!window.google || !window.google.maps) {
+      if (document.querySelector('script[src*="maps.googleapis.com"]')) {
+          return;
+      }
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
       script.async = true;
