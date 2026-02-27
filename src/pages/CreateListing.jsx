@@ -7,10 +7,9 @@ import '../css/sell.css';
 
 const CreateListing = () => {
     const navigate = useNavigate();
-    const { addListing, stores } = useListings();
+    const { stores } = useListings();
 
     const [step, setStep] = useState(1);
-
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -26,6 +25,8 @@ const CreateListing = () => {
     const [imagePreview, setImagePreview] = useState(null);
 
     const [storeQuery, setStoreQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const updateField = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -37,21 +38,50 @@ const CreateListing = () => {
         setImagePreview(URL.createObjectURL(file));
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (step < 3) {
             setStep(step + 1);
             return;
         }
 
-        addListing({
-            title: formData.title || 'Untitled Item',
-            price: parseInt(formData.price, 10) || 0,
-            description: formData.description,
-            location: formData.location?.name || 'No location selected',
-            image: imagePreview, // temporary local preview
-        });
+        setLoading(true);
+        setError(null);
 
-        navigate('/selling');
+        try {
+            // Prepare payload for backend
+            const payload = {
+                title: formData.title || 'Untitled Item',
+                description: formData.description,
+                price: parseFloat(formData.price) || 0,
+                location: formData.location?.name || 'No location selected',
+                image: imagePreview,
+            };
+
+            // POST to backend
+            const res = await fetch('http://localhost:8080/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to create listing');
+            }
+
+            const createdListing = await res.json();
+
+            // Optionally update context
+            // If you want to maintain a global state in ListingsContext:
+            // addListing(createdListing);
+
+            // Navigate to listing-created page
+            navigate(`/listing-created/${createdListing.id}`);
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleBack = () => {
@@ -65,7 +95,6 @@ const CreateListing = () => {
 
     const renderStep = () => {
         switch (step) {
-            /* ================= STEP 1 ================= */
             case 1:
                 return (
                     <div className="wizard-step-content animate-in">
@@ -197,7 +226,6 @@ const CreateListing = () => {
                     </div>
                 );
 
-            /* ================= STEP 2 ================= */
             case 2:
                 return (
                     <div className="wizard-step-content animate-in">
@@ -243,7 +271,6 @@ const CreateListing = () => {
                     </div>
                 );
 
-            /* ================= STEP 3 ================= */
             case 3:
                 return (
                     <div className="wizard-step-content animate-in">
@@ -284,83 +311,30 @@ const CreateListing = () => {
     return (
         <div className="wizard-layout">
             <Header />
-            <header
-                className="wizard-nav"
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'auto 1fr auto',
-                    alignItems: 'center',
-                    padding: '18px 28px'
-                }}
-            >
-                {/* BACK BUTTON — styled like Continue */}
-                <button
-                    onClick={handleBack}
-                    style={{
-                        justifySelf: 'start',
-                        padding: '8px 22px',
-                        borderRadius: '999px',
-                        border: '1.5px solid #C4B5FD',
-                        background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)',
-                        color: '#7C3AED',
-                        fontWeight: 800,
-                        fontSize: '0.85rem',
-                        cursor: 'pointer',
-                        boxShadow: '0 6px 18px rgba(124, 58, 237, 0.08)'
-                    }}
-                >
-                    ← Back
-                </button>
-
-                {/* CENTERED HEADING */}
-                <div
-                    style={{
-                        justifySelf: 'center',
-                        textAlign: 'center',
-                        lineHeight: 1.2
-                    }}
-                >
-                    <div
-                        style={{
-                            fontSize: '1.05rem',
-                            fontWeight: 850,
-                            color: '#1E293B'
-                        }}
-                    >
-                        Create a Listing
-                    </div>
-                    <div
-                        style={{
-                            fontSize: '0.75rem',
-                            fontWeight: 600,
-                            color: '#64748B',
-                            marginTop: '2px'
-                        }}
-                    >
-                        Step {step} of 3
-                    </div>
+            <header className="wizard-nav" style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', padding: '18px 28px' }}>
+                <button onClick={handleBack} style={{ justifySelf: 'start', padding: '8px 22px', borderRadius: '999px', border: '1.5px solid #C4B5FD', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', color: '#7C3AED', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer', boxShadow: '0 6px 18px rgba(124, 58, 237, 0.08)' }}>← Back</button>
+                <div style={{ justifySelf: 'center', textAlign: 'center', lineHeight: 1.2 }}>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 850, color: '#1E293B' }}>Create a Listing</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748B', marginTop: '2px' }}>Step {step} of 3</div>
                 </div>
-
-                {/* RIGHT SPACER (keeps title centered) */}
                 <div />
             </header>
-
 
             <main className="wizard-viewport">
                 {renderStep()}
             </main>
 
             <footer className="wizard-dock-footer">
-                <button className="btn-wizard-back" onClick={handleBack}>
-                    Back
-                </button>
-
+                <button className="btn-wizard-back" onClick={handleBack}>Back</button>
                 <button className="btn-wizard-next" onClick={handleNext}>
-                    {step === 3 ? 'Publish Listing' : 'Continue'}
+                    {loading ? 'Creating...' : step === 3 ? 'Publish Listing' : 'Continue'}
                 </button>
             </footer>
+
+            {error && <p className="error-message">{error}</p>}
         </div>
     );
-};
 
+};
 export default CreateListing;
+

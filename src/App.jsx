@@ -12,6 +12,7 @@ import { ListingsProvider } from './context/ListingsContext'
 import './App.css'
 import Terms from './pages/Terms'
 import Listing from './pages/Listing'
+import ListingCreated from './pages/ListingCreated';
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
         <Route path="/partner-form" element={<PartnerForm />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/listing" element={<Listing />} />
+        <Route path="/listing/:id" element={<Listing />} />
+        <Route path="/listing-created/:id" element={<ListingCreated />} />
       </Routes>
     </ListingsProvider>
   )
