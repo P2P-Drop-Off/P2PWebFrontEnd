@@ -2,6 +2,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import AddressAutocomplete from "../components/AddressAutocomplete";
 import "../css/partner-form.css";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { submitPartnerApplication, db } from "../functions/firebase";
@@ -26,6 +27,9 @@ export default function PartnerForm() {
     "role"
   ];
 
+  const [addressChosenFromGoogle, setAddressChosenFromGoogle] = useState(false);
+  const [addressInputValue, setAddressInputValue] = useState("");
+
   const [form, setForm] = useState({
     storeName: "",
     storeType: "",
@@ -33,6 +37,7 @@ export default function PartnerForm() {
     city: "",
     state: "",
     zip: "",
+    suite: "",
     phone: "",
     email: "",
     submittersName: "",
@@ -168,6 +173,11 @@ export default function PartnerForm() {
           }
         });
 
+        // --- 1b. Address must be chosen from Google Places (not just typed) ---
+        if (!addressChosenFromGoogle) {
+          newErrors.address = "Please select an address from the suggestions to ensure a valid location.";
+        }
+
         // --- 2. Validate business hours ---
         const hoursError = validateHours();
         if (hoursError) newErrors.hours = hoursError;
@@ -203,7 +213,7 @@ export default function PartnerForm() {
         if (Object.keys(newErrors).length > 0) {
           setTimeout(() => {
             const firstErrorElement = document.querySelector(
-              ".input-error, .section-error"
+              ".input-error, .section-error, .address-autocomplete-wrap .error-text"
             );
             if (firstErrorElement)
               firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -312,54 +322,50 @@ export default function PartnerForm() {
             </div>
           </SectionCard>
 
-          {/* Location Details */}
+          {/* Location Details – address valid only when a Google Place is selected */}
           <SectionCard title="Location Details">
-            <Input
-              label="Street Address *"
-              name="street"
-              placeholder="e.g. 123 Main St"
-              value={form.street}
-              onChange={handleChange}
-              error={errors.street}
+            <AddressAutocomplete
+              value={addressInputValue}
+              onChange={(val) => {
+                setAddressInputValue(val);
+                setErrors((prev) => ({ ...prev, address: undefined }));
+                if (addressChosenFromGoogle) {
+                  setAddressChosenFromGoogle(false);
+                  setForm((prev) => ({
+                    ...prev,
+                    street: "",
+                    city: "",
+                    state: "",
+                    zip: "",
+                    suite: "",
+                  }));
+                }
+              }}
+              onPlaceSelect={(parsed, formattedAddress) => {
+                setForm((prev) => ({
+                  ...prev,
+                  street: parsed.street || prev.street,
+                  city: parsed.city || prev.city,
+                  state: parsed.state || prev.state,
+                  zip: parsed.zip || prev.zip,
+                  suite: parsed.suite || prev.suite,
+                }));
+                setAddressInputValue(formattedAddress || "");
+                setAddressChosenFromGoogle(true);
+                setErrors((prev) => ({ ...prev, address: undefined }));
+              }}
+              error={errors.address}
             />
-            <div className="grid-3">
-              <Input
-                label="City *"
-                name="city"
-                placeholder="e.g. San Clemente"
-                value={form.city}
-                onChange={handleChange}
-                error={errors.city}
-              />
-              <div className="form-group">
-                <label>State *</label>
-                <select
-                  name="state"
-                  value={form.state}
-                  onChange={handleChange}
-                  error={errors.state}
-                  className={`input ${errors.state ? "input-error" : ""}`}
-                  >
-                    {US_STATES.map((state) => (
-                      <option key={state.value} value={state.value}>
-                        {state.label}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.state && (
-                    <span className="error-text">{errors.state}</span>
-                  )}
-                </div>
-
-              <Input
-                label="Zip Code *"
-                name="zip"
-                placeholder="e.g. 92672"
-                value={form.zip}
-                onChange={handleChange}
-                error={errors.zip}
-              />
-            </div>
+            {addressChosenFromGoogle && (
+              <div className="address-summary">
+                <span className="address-summary-label">Selected address:</span>
+                <span className="address-summary-text">
+                  {[form.street, form.suite && `Suite/Unit ${form.suite}`, form.city, form.state, form.zip]
+                    .filter(Boolean)
+                    .join(", ")}
+                </span>
+              </div>
+            )}
           </SectionCard>
 
 {/* Contact + Business Hours Side-by-Side */}

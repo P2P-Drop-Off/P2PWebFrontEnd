@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, doc, setDoc, collection, addDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, collection, addDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 
@@ -71,6 +71,7 @@ export const submitPartnerApplication = async (form) => {
   try {
     const docRef = await addDoc(collection(db, "partners"), {
       ...form,
+      status: "unapproved",
       createdAt: new Date().toISOString(),
     });
     return docRef.id;
@@ -78,6 +79,33 @@ export const submitPartnerApplication = async (form) => {
     console.error("Error submitting partner application:", error);
     throw error;
   }
+};
+
+export const getPartners = async () => {
+  const snapshot = await getDocs(collection(db, "partners"));
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+};
+
+export const updatePartnerStatus = async (partnerId, status) => {
+  await updateDoc(doc(db, "partners", partnerId), { status });
+};
+
+export const deletePartner = async (partnerId) => {
+  await deleteDoc(doc(db, "partners", partnerId));
+};
+
+// --- Listings (Create Listing flow) ---
+export const createListing = async (listing) => {
+  const docRef = await addDoc(collection(db, "listings"), {
+    title: listing.title || "Untitled Item",
+    description: listing.description || "",
+    price: listing.price ?? 0,
+    location: listing.location ?? "No location selected",
+    locationId: listing.locationId ?? null,
+    image: listing.image ?? null,
+    createdAt: new Date().toISOString(),
+  });
+  return docRef.id;
 };
 
 export { auth, db };

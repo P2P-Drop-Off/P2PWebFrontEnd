@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../context/ListingsContext';
+import { createListing as createListingInFirebase } from '../functions/firebase';
 import MapComponent from '../components/MapComponent';
 import Header from '../components/Header';
 import '../css/sell.css';
 
 const CreateListing = () => {
     const navigate = useNavigate();
-    const { stores } = useListings();
+    const { stores, fetchListings } = useListings();
 
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -27,6 +28,12 @@ const CreateListing = () => {
     const [storeQuery, setStoreQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [stepError, setStepError] = useState(null);
+
+    // Refresh approved stores when opening Create Listing so newly approved partners appear in the list
+    useEffect(() => {
+        fetchListings();
+    }, []);
 
     const updateField = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -38,44 +45,68 @@ const CreateListing = () => {
         setImagePreview(URL.createObjectURL(file));
     };
 
+    const validateStep = () => {
+        setStepError(null);
+        if (step === 1) {
+            if (!formData.title?.trim()) {
+                setStepError('Please enter an item name.');
+                return false;
+            }
+            const p = parseFloat(formData.price);
+            if (formData.price === '' || formData.price == null || Number.isNaN(p) || p < 0) {
+                setStepError('Please enter a valid price (0 or greater).');
+                return false;
+            }
+            if (!imagePreview) {
+                setStepError('Please upload an image.');
+                return false;
+            }
+        }
+        if (step === 2) {
+            if (!formData.location) {
+                setStepError('Please select a pickup location.');
+                return false;
+            }
+        }
+        return true;
+    };
+
     const handleNext = async () => {
         if (step < 3) {
+            if (!validateStep()) return;
             setStep(step + 1);
             return;
         }
 
+        setStepError(null);
         setLoading(true);
         setError(null);
 
         try {
-            // Prepare payload for backend
+            const priceNum = parseFloat(formData.price);
+            const safePrice = (Number.isNaN(priceNum) || priceNum < 0) ? 0 : priceNum;
             const payload = {
                 title: formData.title || 'Untitled Item',
-                description: formData.description,
-                price: parseFloat(formData.price) || 0,
+                description: formData.description || '',
+                price: safePrice,
                 location: formData.location?.name || 'No location selected',
+                locationId: formData.location?.id ?? null,
                 image: imagePreview,
             };
 
-            // POST to backend
-            const res = await fetch('http://localhost:8080/items', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+            // Store in Firebase (listings collection)
+            const listingId = await createListingInFirebase(payload);
+            navigate(`/listing-created/${listingId}`);
 
-            if (!res.ok) {
-                throw new Error('Failed to create listing');
-            }
-
-            const createdListing = await res.json();
-
-            // Optionally update context
-            // If you want to maintain a global state in ListingsContext:
-            // addListing(createdListing);
-
-            // Navigate to listing-created page
-            navigate(`/listing-created/${createdListing.id}`);
+            // --- Backend (commented out): previously POSTed to http://localhost:8080/items ---
+            // const res = await fetch('http://localhost:8080/items', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(payload),
+            // });
+            // if (!res.ok) throw new Error('Failed to create listing');
+            // const createdListing = await res.json();
+            // navigate(`/listing-created/${createdListing.id}`);
         } catch (err) {
             console.error(err);
             setError(err.message);
@@ -85,6 +116,7 @@ const CreateListing = () => {
     };
 
     const handleBack = () => {
+        setStepError(null);
         if (step > 1) setStep(step - 1);
         else navigate('/selling');
     };
@@ -92,6 +124,16 @@ const CreateListing = () => {
     const filteredStores = stores.filter((s) =>
         `${s.name} ${s.address}`.toLowerCase().includes(storeQuery.toLowerCase())
     );
+
+    // Format price for display: non-negative, 2 decimals (fixes e.g. -47 or empty showing wrong)
+    const formatPriceDisplay = (value) => {
+        const num = parseFloat(value);
+        if (value === '' || value == null || Number.isNaN(num)) return '0.00';
+        const clamped = num < 0 ? 0 : num;
+        return clamped.toFixed(2);
+    };
+
+    const displayPrice = formatPriceDisplay(formData.price);
 
     const renderStep = () => {
         switch (step) {
@@ -205,9 +247,20 @@ const CreateListing = () => {
                                     <input
                                         className="input-styled"
                                         type="number"
+                                        min="0"
+                                        step="0.01"
                                         placeholder="0.00"
                                         value={formData.price}
-                                        onChange={(e) => updateField('price', e.target.value)}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            if (v === '' || v === '-') {
+                                                updateField('price', v);
+                                                return;
+                                            }
+                                            const num = parseFloat(v);
+                                            if (!Number.isNaN(num) && num < 0) return;
+                                            updateField('price', v);
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -244,26 +297,34 @@ const CreateListing = () => {
                                 />
 
                                 <div className="store-results-list">
-                                    {filteredStores.map(loc => (
-                                        <div
-                                            key={loc.id}
-                                            className={`store-card-selectable ${formData.location?.id === loc.id ? 'selected' : ''}`}
-                                            onClick={() => updateField('location', loc)}
-                                        >
-                                            <div className="selector-circle" />
-                                            <div className="store-info-block">
-                                                <h5>{loc.name}</h5>
-                                                <p>{loc.address}</p>
-                                                <span className="store-price-tag">{loc.price}</span>
-                                            </div>
+                                    {filteredStores.length === 0 ? (
+                                        <div className="store-list-empty">
+                                            {stores.length === 0
+                                                ? 'No approved stores yet. Approve partner stores in Admin to see them here.'
+                                                : 'No stores match your search.'}
                                         </div>
-                                    ))}
+                                    ) : (
+                                        filteredStores.map(loc => (
+                                            <div
+                                                key={loc.id}
+                                                className={`store-card-selectable ${formData.location?.id === loc.id ? 'selected' : ''}`}
+                                                onClick={() => updateField('location', loc)}
+                                            >
+                                                <div className="selector-circle" />
+                                                <div className="store-info-block">
+                                                    <h5>{loc.name}</h5>
+                                                    <p>{loc.address}</p>
+                                                    {loc.price && <span className="store-price-tag">{loc.price}</span>}
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
 
                             <div className="map-viewport-wrapper">
                                 <MapComponent
-                                    markers={stores}
+                                    markers={stores.filter((s) => s.lat != null && s.lng != null)}
                                     onMarkerClick={(loc) => updateField('location', loc)}
                                 />
                             </div>
@@ -293,12 +354,24 @@ const CreateListing = () => {
 
                                 <div className="review-stats-block">
                                     <h3>{formData.title || 'Untitled Item'}</h3>
-                                    <div className="review-price-pill">${formData.price || '0.00'}</div>
+                                    <div className="review-price-pill">${displayPrice}</div>
                                     <p className="review-desc-text">
                                         {formData.description || 'No description provided'}
                                     </p>
                                 </div>
                             </div>
+                            {formData.location && (
+                                <div className="review-footer-location">
+                                    <span className="loc-icon-purple">📍</span>
+                                    <div>
+                                        <strong>Pickup location</strong>
+                                        <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: '0.9rem' }}>
+                                            {formData.location.name}
+                                            {formData.location.address && ` — ${formData.location.address}`}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 );
@@ -324,14 +397,17 @@ const CreateListing = () => {
                 {renderStep()}
             </main>
 
+            {(error || stepError) && (
+                <p className="error-message" style={{ padding: '8px 28px', margin: 0, background: '#fef2f2', color: '#dc2626', fontSize: '0.9rem' }}>
+                    {stepError || error}
+                </p>
+            )}
             <footer className="wizard-dock-footer">
                 <button className="btn-wizard-back" onClick={handleBack}>Back</button>
                 <button className="btn-wizard-next" onClick={handleNext}>
                     {loading ? 'Creating...' : step === 3 ? 'Publish Listing' : 'Continue'}
                 </button>
             </footer>
-
-            {error && <p className="error-message">{error}</p>}
         </div>
     );
 

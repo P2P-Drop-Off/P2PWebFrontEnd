@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { getPartners } from "../functions/firebase";
 
 const ListingsContext = createContext();
 export const useListings = () => useContext(ListingsContext);
@@ -19,13 +20,8 @@ export const ListingsProvider = ({ children }) => {
     }
   });
 
-  // Stores 
-  const [stores] = useState([
-    { id: 1, name: "North District Store", address: "Main St & 5th Ave 10001", price: "$5/mo storage", lat: 37.7850, lng: -122.4200 },
-    { id: 2, name: "East Quarter Shop", address: "Market St Plaza 10002", price: "$8/mo storage", lat: 37.7700, lng: -122.3900 },
-    { id: 3, name: "Downtown Center", address: "Central Square 10003", price: "$10/mo storage", lat: 37.7749, lng: -122.4194 },
-    { id: 4, name: "West Side Location", address: "Oak Ave & Elm St 10004", price: "$6/mo storage", lat: 37.7600, lng: -122.4400 },
-  ]);
+  // Stores: derived from Firebase partners (approved only for display)
+  const [stores, setStores] = useState([]);
 
   // Auth
   const login = (user) => {
@@ -37,24 +33,31 @@ export const ListingsProvider = ({ children }) => {
     localStorage.removeItem("currentUser");
   };
 
-  // Fetch all listings from backend 
+  // Fetch partners from Firebase (partners collection) and use for listings + stores
   const fetchListings = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await fetch("http://localhost:8080/items");
-
-      const text = await res.text(); // read raw response first
-
-      if (!res.ok) {
-        console.error("Status:", res.status);
-        console.error("Raw response:", text);
-        throw new Error(`Server error: ${res.status}`);
-      }
-
-      // Only parse JSON if status is OK
-      const data = JSON.parse(text);
-      setListings(data);
-
+      const partners = await getPartners();
+      // Map partner docs to listing-like shape so pages using title/image still work
+      const mapped = partners.map((p) => ({
+        ...p,
+        title: p.storeName,
+        image: null,
+      }));
+      setListings(mapped);
+      // Stores for dropdowns: approved partners as store options
+      const approved = partners.filter((p) => p.status === "approved");
+      setStores(
+        approved.map((p) => ({
+          id: p.id,
+          name: p.storeName,
+          address: [p.street, p.suite, p.city, p.state, p.zip].filter(Boolean).join(", "),
+          price: p.space ? `${p.space} sq ft` : "",
+          lat: p.lat,
+          lng: p.lng,
+        }))
+      );
     } catch (err) {
       console.error("FULL ERROR OBJECT:", err);
       setError(err.message);

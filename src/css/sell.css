@@ -744,6 +744,14 @@
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
 }
 
+.store-list-empty {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: #64748B;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 .store-card-selectable {
     padding: 1.1rem 1.15rem;
     border: 1px solid #E7ECF4;

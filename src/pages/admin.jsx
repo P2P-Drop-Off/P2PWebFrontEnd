@@ -1,176 +1,207 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
+import { getPartners, updatePartnerStatus, deletePartner } from "../functions/firebase";
 import "../css/admin.css";
 
+const STATUS_OPTIONS = ["unapproved", "approved", "rejected"];
 
-const stats = [
-    { label: "Total Stores", value: "XX", },
-    { label: "Total Revenue", value: "$XXX", },
-    { label: "Active Listings", value: "XXX", },
-    { label: "Active Users", value: "XXXX", }
-];
+function formatAddress(partner) {
+  const parts = [
+    partner.street,
+    partner.suite && `Suite ${partner.suite}`,
+    partner.city,
+    partner.state,
+    partner.zip,
+  ].filter(Boolean);
+  return parts.join(", ") || "—";
+}
 
-const stores = [
-    {
-        name: "Downtown Center",
-        location: "New York, 10001",
-        cost: "$15/month",
-        capacity: 145,
-        max: 200,
-        status: "active",
-        date: "Dec 15, 2025"
-    },
-    {
-        name: "North District Store",
-        location: "New York, 10002",
-        cost: "$12/month",
-        capacity: 98,
-        max: 150,
-        status: "active",
-        date: "Nov 20, 2025"
-    },
-    {
-        name: "East Quarter Shop",
-        location: "New York, 10003",
-        cost: "$18/month",
-        capacity: 187,
-        max: 250,
-        status: "active",
-        date: "Oct 10, 2025"
-    },
-    {
-        name: "West Side Location",
-        location: "New York, 10004",
-        cost: "$10/month",
-        capacity: 45,
-        max: 100,
-        status: "inactive",
-        date: "Sep 5, 2025"
-    }
-];
+function formatHours(hours) {
+  if (!hours || typeof hours !== "object") return "—";
+  const dayNames = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
+  return Object.entries(hours)
+    .map(([day, data]) => {
+      const label = dayNames[day] || day;
+      if (data?.closed) return `${label}: Closed`;
+      if (data?.open && data?.close) return `${label}: ${data.open}–${data.close}`;
+      return `${label}: —`;
+    })
+    .join(" · ");
+}
 
 export default function AdminDashboard() {
-    const [storeView, setStoreView] = useState("manage");
+  const [partners, setPartners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
 
-    return (
-        <>
-            <Header />
-            <div className="admin-container">
-            {/* Admin Overview */}
-            <div className="section-header">
-                <h2>Admin Overview</h2>
-                <p>Manage stores and view sales analytics</p>
-            </div>
+  const loadPartners = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getPartners();
+      setPartners(data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load partners.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <div className="stats-grid">
-                {stats.map((s, i) => (
-                    <div key={i} className="stat-card">
-                        <span className={`badge ${s.color}`}>{s.change}</span>
-                        <p>{s.label}</p>
-                        <h3>{s.value}</h3>
-                    </div>
-                ))}
-            </div>
+  useEffect(() => {
+    loadPartners();
+  }, []);
 
-            {/* Store Management */}
-            <div className="table-header">
-                <h3>Store Management</h3>
-                <div className="store-tabs">
-                    <button
-                        className={storeView === "manage" ? "tab active" : "tab"}
-                        onClick={() => setStoreView("manage")}
-                    >
-                        Manage Stores
-                    </button>
-                    <button
-                        className={storeView === "onboard" ? "tab active" : "tab"}
-                        onClick={() => setStoreView("onboard")}
-                    >
-                        Onboard New Store
-                    </button>
-                    <button
-                        className={storeView === "requests" ? "tab active" : "tab"}
-                        onClick={() => setStoreView("requests")}
-                    >
-                        Store Requests
-                    </button>
-                </div>
-            </div>
+  const handleStatusChange = async (id, newStatus) => {
+    setActionLoading(id);
+    try {
+      await updatePartnerStatus(id, newStatus);
+      setPartners((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update status.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
-            {/* Manage Stores View */}
-            {storeView === "manage" && (
-                <>
-                    <div className="table-actions">
-                        <input placeholder="Search stores..." />
-                        <button className="primary">+ Add Store</button>
-                    </div>
+  const handleDelete = async (id, storeName) => {
+    if (!window.confirm(`Delete partner "${storeName || id}"? This cannot be undone.`)) return;
+    setActionLoading(id);
+    try {
+      await deletePartner(id);
+      setPartners((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete partner.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
-                    <div className="table">
-                        <div className="table-row header">
-                            <span>Store Name</span>
-                            <span>Location</span>
-                            <span>Storage Cost</span>
-                            <span>Capacity</span>
-                            <span>Status</span>
-                            <span>Date Added</span>
-                            <span>Actions</span>
-                        </div>
+  return (
+    <>
+      <Header />
+      <div className="admin-container">
+        <div className="section-header">
+          <h2>Admin</h2>
+          <p>Partner applications from the partners collection</p>
+        </div>
 
-                        {stores.map((store, i) => {
-                            const percent = (store.capacity / store.max) * 100;
-                            return (
-                                <div key={i} className="table-row">
-                                    <span>{store.name}</span>
-                                    <span>{store.location}</span>
-                                    <span>{store.cost}</span>
-                                    <span>
-                                        <div className="progress">
-                                            <div
-                                                className="progress-fill"
-                                                style={{ width: `${percent}%` }}
-                                            />
-                                        </div>
-                                        {store.capacity}/{store.max}
-                                    </span>
-                                    <span className={`status ${store.status}`}>
-                                        {store.status}
-                                    </span>
-                                    <span>{store.date}</span>
-                                    <span className="actions">✏️ 🗑️</span>
+        <div className="partners-section">
+          <h3>Partner Applications</h3>
+          {loading && <p className="admin-loading">Loading partners…</p>}
+          {error && <p className="admin-error">{error}</p>}
+          {!loading && !error && partners.length === 0 && (
+            <p className="admin-empty">No partner applications yet.</p>
+          )}
+          {!loading && partners.length > 0 && (
+            <div className="partners-table-wrap">
+              <table className="partners-table">
+                <thead>
+                  <tr>
+                    <th>Store</th>
+                    <th>Address</th>
+                    <th>Contact</th>
+                    <th>Submitter</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {partners.map((partner) => (
+                    <React.Fragment key={partner.id}>
+                      <tr>
+                        <td>
+                          <div className="partner-name">{partner.storeName || "—"}</div>
+                          {partner.storeType && (
+                            <div className="partner-meta">{partner.storeType}</div>
+                          )}
+                          {partner.space && (
+                            <div className="partner-meta">{partner.space} sq ft · {partner.itemsCanStore || "—"}</div>
+                          )}
+                        </td>
+                        <td className="partner-address">{formatAddress(partner)}</td>
+                        <td>
+                          <div>{partner.phone || "—"}</div>
+                          <div>{partner.email || "—"}</div>
+                        </td>
+                        <td>
+                          <div>{partner.submittersName || "—"}</div>
+                          {partner.role && <div className="partner-meta">{partner.role}</div>}
+                        </td>
+                        <td>
+                          <span className={`status status-${partner.status || "unapproved"}`}>
+                            {partner.status || "unapproved"}
+                          </span>
+                        </td>
+                        <td>{partner.createdAt ? new Date(partner.createdAt).toLocaleDateString() : "—"}</td>
+                        <td className="partner-actions">
+                          <select
+                            value={partner.status || "unapproved"}
+                            onChange={(e) => handleStatusChange(partner.id, e.target.value)}
+                            disabled={actionLoading === partner.id}
+                            className="status-select"
+                          >
+                            {STATUS_OPTIONS.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            className="btn-delete"
+                            onClick={() => handleDelete(partner.id, partner.storeName)}
+                            disabled={actionLoading === partner.id}
+                            title="Delete"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-toggle-details"
+                            onClick={() => setExpandedId(expandedId === partner.id ? null : partner.id)}
+                          >
+                            {expandedId === partner.id ? "▲ Less" : "▼ More"}
+                          </button>
+                        </td>
+                      </tr>
+                      {expandedId === partner.id && (
+                        <tr className="partner-details-row">
+                          <td colSpan={7}>
+                            <div className="partner-details">
+                              <div className="partner-details-grid">
+                                <div>
+                                  <strong>Hours</strong>
+                                  <p>{formatHours(partner.hours)}</p>
                                 </div>
-                            );
-                        })}
-                    </div>
-                </>
-            )}
-
-            {/* Onboard New Store View */}
-            {storeView === "onboard" && (
-                <div className="empty-state">
-                    <h4>Onboard a New Store</h4>
-                    <p>Submit and configure new store locations.</p>
-                    <button className="primary">Start Onboarding</button>
-                </div>
-            )}
-
-            {/* Store Requests View */}
-            {storeView === "requests" && (
-                <div className="empty-state">
-                    <h4>Store Requests</h4>
-                    <p>Review pending store onboarding requests.</p>
-                    <button className="primary">View Requests</button>
-                </div>
-            )}
-
-            {/* Admin Management */}
-            <div className="table-header">
-                <h3>Admin Management</h3>
-                <div className="table-actions">
-                    <input placeholder="Search admins..." />
-                    <button className="primary">+ Add Admin</button>
-                </div>
+                                <div>
+                                  <strong>Amenities</strong>
+                                  <p>{Array.isArray(partner.amenities) && partner.amenities.length ? partner.amenities.join(", ") : "—"}</p>
+                                </div>
+                                <div className="full-width">
+                                  <strong>Instructions</strong>
+                                  <p>{partner.instructions || "—"}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            </div>
-        </>
-    );
+          )}
+        </div>
+      </div>
+    </>
+  );
 }
