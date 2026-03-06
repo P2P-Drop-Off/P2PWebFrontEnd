@@ -21,6 +21,8 @@ const CreateListing = () => {
     location: null,
   });
 
+  const [fieldErrors, setFieldErrors] = useState({});
+
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -31,39 +33,57 @@ const CreateListing = () => {
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+
+    // clear error when user edits field
+    setFieldErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[field];
+      return newErrors;
+    });
   };
 
   const handleImageUpload = (file) => {
     if (!file) return;
+
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
+
+    setFieldErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.image;
+      return newErrors;
+    });
   };
 
   const validateStep = () => {
-    setStepError(null);
+    const errors = {};
+
     if (step === 1) {
-      if (!formData.title?.trim()) {
-        setStepError('Please enter an item name.');
-        return false;
-      }
-      const p = parseFloat(formData.price);
-      if (formData.price === '' || Number.isNaN(p) || p < 0) {
-        setStepError('Please enter a valid price (0 or greater).');
-        return false;
-      }
-      if (!imagePreview) {
-        setStepError('Please upload an image.');
-        return false;
-      }
+        if (!formData.title?.trim()) {
+        errors.title = "Item name is required.";
+        }
+
+        const p = parseFloat(formData.price);
+        if (formData.price === '' || Number.isNaN(p) || p < 0) {
+        errors.price = "Please enter a valid price.";
+        }
+
+        if (!imagePreview) {
+        errors.image = "Please upload an image.";
+        }
     }
+
     if (step === 2) {
-      if (!formData.location) {
-        setStepError('Please select a pickup location.');
+        if (!formData.location) {
+        setStepError("Please select a pickup location.");
         return false;
-      }
+        }
     }
-    return true;
-  };
+
+    setFieldErrors(errors);
+
+    return Object.keys(errors).length === 0;
+};
 
   const handleNext = async () => {
     if (step < 3) {
@@ -144,13 +164,16 @@ const CreateListing = () => {
             <div className="field-group">
               <label>Item Name *</label>
               <input
-                className="input-styled"
+                className={`input-styled ${fieldErrors.title ? "input-error" : ""}`}
                 type="text"
                 placeholder="e.g., Vintage Leather Sofa"
                 value={formData.title}
                 onChange={(e) => updateField('title', e.target.value)}
               />
             </div>
+            {fieldErrors.title && (
+                <div className="error-text">{fieldErrors.title}</div>
+            )}
 
             <div className="field-group">
               <label>Description</label>
@@ -218,20 +241,34 @@ const CreateListing = () => {
               </div>
             </div>
 
+            {fieldErrors.image && (
+                <div className="error-text">{fieldErrors.image}</div>
+            )}
+
             <div className="form-row">
               <div className="field-group">
                 <label>Price *</label>
-                <div className="icon-input-container">
-                  <span className="input-icon">$</span>
-                  <input
-                    className="input-styled"
-                    type="number"
-                    placeholder="0.00"
-                    value={formData.price}
-                    onChange={(e) => updateField('price', e.target.value)}
-                  />
-                </div>
+
+                
+                  <div className="icon-input-container">
+                    <span className="input-icon">$</span>
+
+                    <input
+                      className={`input-styled ${fieldErrors.price ? "input-error" : ""}`}
+                      type="number"
+                      placeholder="0.00"
+                      value={formData.price}
+                      onChange={(e) => updateField('price', e.target.value)}
+                    />
+                  </div>
+                
+               
+              
+              {fieldErrors.price && (
+                    <div className="field-error">{fieldErrors.price}</div>
+                  )}
               </div>
+            
 
               <div className="field-group">
                 <label>Marketplace Link</label>

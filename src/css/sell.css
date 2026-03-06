@@ -1111,3 +1111,43 @@
   font-weight: 700;
   margin-bottom: 2px;
 }
+
+/* error styles */
+.input-error {
+  border-color: #ef4444 !important;
+  background: #fef2f2;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+}
+
+.field-error {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 5px;
+    
+}
+
+.section-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.textarea-styled,
+.icon-input-container .input-styled {
+  background-color: white !important;
+}
+
+
+/* ensures input + error stack vertically */
+.input-error-stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
