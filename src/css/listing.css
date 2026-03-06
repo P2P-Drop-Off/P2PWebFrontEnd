@@ -249,3 +249,42 @@
   outline: none;
   box-shadow: none;
 }
+
+
+.review-location-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #F8FAFF;
+  border: 1px solid #E2E8F0;
+}
+
+.review-location-icon {
+  font-size: 1.4rem;
+}
+
+.review-location-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-location-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1E293B;
+}
+
+.review-location-address {
+  font-size: 0.85rem;
+  color: #64748B;
+}
+
+.review-location-price {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #7C3AED;
+  margin-top: 2px;
+}

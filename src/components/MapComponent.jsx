@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchLocations } from '../functions/locationService';
 
-const MapComponent = ({ height = '100%', width = '100%', markers = [], onMarkerClick, center }) => {
+const MapComponent = ({ height = '100%', width = '100%', markers = [], onMarkerClick, center, onExternalControl }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
@@ -14,7 +14,7 @@ const MapComponent = ({ height = '100%', width = '100%', markers = [], onMarkerC
   const [showZipInput, setShowZipInput] = useState(false);
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
-
+  
   // Function to center map on a location
   const centerMapOnLocation = (location) => {
     if (mapInstanceRef.current) {

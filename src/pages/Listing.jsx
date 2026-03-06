@@ -19,7 +19,7 @@ export default function Listing() {
   const fetchListing = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8080/items/${id}`);
+      const res = await fetch(`http://localhost:8080/api/items/${id}`);
       if (!res.ok) {
         if (res.status === 404) throw new Error("Listing not found");
         throw new Error("Failed to fetch listing");
@@ -69,7 +69,7 @@ export default function Listing() {
         <aside className="listing-card" aria-label="Product details">
           {/* Clickable Image */}
           <img
-            src={listing.image}
+            src={listing.image} // ← Use Firebase Storage URL
             alt={listing.title}
             className="listing-image"
             onClick={() => setShowModal(true)}

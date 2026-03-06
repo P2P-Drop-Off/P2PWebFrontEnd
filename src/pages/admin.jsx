@@ -37,18 +37,28 @@ export default function AdminDashboard() {
   const [actionLoading, setActionLoading] = useState(null);
 
   const loadPartners = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getPartners();
-      setPartners(data);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load partners.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  setError(null);
+
+  try {
+    const data = await getPartners();
+
+    const sorted = data.sort((a, b) => {
+      const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+      const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+      return dateB - dateA; // newest first
+    });
+
+    console.log("Sorted partners:", sorted);
+    setPartners(sorted);
+
+  } catch (err) {
+    console.error(err);
+    setError("Failed to load partners.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadPartners();
