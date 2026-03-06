@@ -1,0 +1,92 @@
+/* Page container */
+.listing-created-page {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+/* Success title */
+.listing-created-page h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+/* Subtitle text */
+.listing-created-page p {
+    font-size: 16px;
+    color: #4B5563;
+}
+
+/* Share box */
+.share-box {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #F3F4F6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Share label */
+.share-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* URL input */
+.share-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* View listing button */
+.view-listing-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #60A5FA, #A78BFA);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.view-listing-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* copy feature below */
+.share-input-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.share-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* copy button */
+.copy-btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #A78BFA;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.copy-btn:hover {
+    background: #825af8;
+}
