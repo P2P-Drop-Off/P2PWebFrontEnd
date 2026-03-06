@@ -389,7 +389,7 @@
 .wizard-nav {
     flex-shrink: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 22px 32px;
     background: linear-gradient(90deg, #F6F8FF 0%, #F7F2FF 100%);
@@ -1100,3 +1100,14 @@
   }
 }
 
+.review-location {
+  margin-top: 14px;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.review-location strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 2px;
+}

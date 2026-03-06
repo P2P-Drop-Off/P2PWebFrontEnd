@@ -285,6 +285,7 @@
     font-size: 13px;
     background: white;
     cursor: pointer;
+    color: black;
 }
 .status-unapproved {
     background: #fef3c7;
@@ -353,3 +354,4 @@
     color: #374151;
     line-height: 1.5;
 }
+
