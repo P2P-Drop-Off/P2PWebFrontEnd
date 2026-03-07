@@ -37,37 +37,52 @@ export const ListingsProvider = ({ children }) => {
   const fetchListings = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const partners = await getPartners();
-      // Map partner docs to listing-like shape so pages using title/image still work
-      const mapped = partners.map((p) => ({
-        ...p,
-        title: p.storeName,
-        image: null,
-      }));
-      setListings(mapped);
-      // Stores for dropdowns: approved partners as store options
-      const approved = partners.filter((p) => p.status === "approved");
-      setStores(
-        approved.map((p) => ({
-          id: p.id,
-          name: p.storeName,
-          address: [p.street, p.suite, p.city, p.state, p.zip].filter(Boolean).join(", "),
-          price: p.space ? `${p.space} sq ft` : "",
-          lat: p.lat,
-          lng: p.lng,
-        }))
-      );
+      const res = await fetch("http://localhost:8080/api/items");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch listings");
+      }
+
+      const data = await res.json();
+
+      setListings(data);
+
     } catch (err) {
-      console.error("FULL ERROR OBJECT:", err);
+      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchStores = async () => {
+    try {
+      const partners = await getPartners();
+
+      const approved = partners.filter((p) => p.status === "approved");
+
+      setStores(
+        approved.map((p) => ({
+          id: p.id,
+          name: p.storeName,
+          address: [p.street, p.suite, p.city, p.state, p.zip]
+            .filter(Boolean)
+            .join(", "),
+          price: p.space ? `${p.space} sq ft` : "",
+          lat: p.lat,
+          lng: p.lng,
+        }))
+      );
+    } catch (err) {
+      console.error("Error fetching stores:", err);
+    }
+  };
+
   useEffect(() => {
     fetchListings();
+    fetchStores();
   }, []);
 
   // Add new listing (POST)
@@ -111,6 +126,7 @@ export const ListingsProvider = ({ children }) => {
     <ListingsContext.Provider
       value={{
         listings,
+        setListings,
         watching,
         stores,
         stats,

@@ -7,7 +7,7 @@ import '../css/sell.css';
 
 const CreateListing = () => {
   const navigate = useNavigate();
-  const { stores } = useListings();
+  const { stores, listings, setListings } = useListings();
   const mapControlRef = useRef(null);
 
   const [step, setStep] = useState(1);
@@ -121,8 +121,22 @@ const CreateListing = () => {
 
       const createdListing = await res.json();
 
-      // Navigate to the listing-created page
-      navigate(`/listing-created/${createdListing.id}`);
+      /* Add listing to dashboard */
+      setListings(prev => [
+        ...prev,
+        {
+          id: createdListing.id,
+          title: formData.title,
+          description: formData.description,
+          price: safePrice,
+          location: formData.location?.name || "",
+          image: imagePreview,
+          views: 0,
+          comments: 0
+        }
+      ]);
+
+navigate(`/selling`);
 
     } catch (err) {
       console.error(err);
@@ -331,40 +345,76 @@ const CreateListing = () => {
         );
 
       case 3:
-        return (
-          <div className="wizard-step-content animate-in">
-            <div className="form-title-section">
-              <h3>Review Your Listing</h3>
-              <p>Make sure everything looks good before publishing</p>
-            </div>
+    return (
+      <div className="wizard-step-content animate-in">
+        <div className="form-title-section">
+          <h3>Review Your Listing</h3>
+          <p>Make sure everything looks good before publishing</p>
+        </div>
 
-            <div className="review-card-frame">
-              <div className="review-main-content">
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Item"
-                    style={{ width: '100%', height: '260px', objectFit: 'cover', borderRadius: '18px' }}
-                  />
-                )}
-                <h3>{formData.title || 'Untitled Item'}</h3>
-                <div className="review-price-pill">${displayPrice}</div>
-                <p>{formData.description || 'No description provided'}</p>
-                {formData.location && (
-                  <div className="review-location-card">
-                    <div className="review-location-icon" style={{ fontSize: '1.2rem' }}>📍</div>
-                    <div className="review-location-info">
-                      <div className="review-location-name" style={{ fontWeight: 600 }}>{formData.location.name}</div>
-                      <div className="review-location-address" style={{ fontSize: '0.85rem', color: '#555' }}>
-                        {formData.location.address}
-                      </div>
-                    </div>
-                  </div>
-                )}
+        <div className="preview-listing-card">
+
+          {/* LEFT: IMAGE */}
+          <div className="preview-media">
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Item"
+                className="preview-image"
+              />
+            )}
+          </div>
+
+          {/* RIGHT: CONTENT */}
+          <div className="preview-body">
+
+            <div className="preview-title-row">
+              <div className="preview-title">
+                {formData.title || "Untitled Item"}
+              </div>
+
+              <div className="preview-price">
+                ${displayPrice}
               </div>
             </div>
+
+            <p className="preview-description">
+              {formData.description || "No description provided"}
+            </p>
+
+            {formData.location && (
+              <div className="pickup-section">
+
+                <h4 className="pickup-title">Pickup Location</h4>
+
+                {/* KEEPING YOUR ORIGINAL LOCATION STYLE */}
+                <div className="review-location-card">
+                  <div className="review-location-icon">📍</div>
+
+                  <div className="review-location-info">
+                    <div className="review-location-name">
+                      {formData.location.name}
+                    </div>
+
+                    <div className="review-location-address">
+                      {formData.location.address}
+                    </div>
+
+                    {formData.location.price && (
+                      <div className="review-location-price">
+                        {formData.location.price}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
           </div>
-        );
+        </div>
+      </div>
+    );
 
       default:
         return null;

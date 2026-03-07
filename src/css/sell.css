@@ -872,15 +872,7 @@
     font-weight: 900;
 }
 
-.review-price-pill {
-    background: #F5F3FF;
-    color: #7C3AED;
-    padding: 6px 18px;
-    border-radius: 999px;
-    font-weight: 900;
-    display: inline-block;
-    margin: 1rem 0;
-}
+
 
 .review-desc-text {
     color: #64748B;
@@ -1038,7 +1030,7 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-@media (max-width: 768px) {
+@media (min-width: 900px) {
   .site-header {
     padding: 14px 18px;
   }
@@ -1151,3 +1143,101 @@
   flex-direction: column;
   width: 100%;
 }
+
+/* ============================
+   REVIEW LISTING CARD
+   ============================ */
+
+.preview-listing-card {
+  display: flex;
+  gap: 24px;
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  padding: 28px;
+  box-shadow: var(--shadow-subtle);
+
+  min-height: 40px; 
+
+  width: 100%;;
+  
+}
+
+.preview-media {
+    flex: 0 0 250px;         /* fixed width for image column */
+    display: flex;
+    align-items: center;     /* vertical centering of the image */
+    justify-content: center;
+}
+
+.preview-image {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.preview-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.preview-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.preview-title {
+  font-size: 1.25rem;
+  font-weight: 750;
+}
+
+.preview-price {
+  background: #e8d9ff;
+  color: #7b2ff7;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.preview-description {
+  margin-top: 8px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* location picup section */
+.pickup-section {
+  margin-top: 50px;
+}
+
+.pickup-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+/* ============================
+   MOBILE REVIEW LAYOUT
+   ============================ */
+
+@media (max-width: 720px) {
+
+  .preview-listing-card {
+    flex-direction: column;
+    justify-content: center;;
+  }
+
+
+  .preview-image {
+    width: 100%;
+    height: auto;
+  }
+
+}
+

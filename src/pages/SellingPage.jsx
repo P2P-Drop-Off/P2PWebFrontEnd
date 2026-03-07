@@ -99,9 +99,7 @@ const SellingPage = () => {
                                             <h4>{item.title}</h4>
                                             <div className="item-price-mini">${item.price}</div>
                                             <div className="item-sub-meta">
-                                                <span>👁️ {item.views}</span>
-                                                <span style={{ marginLeft: '8px' }}>💬 {item.comments}</span>
-                                                <span style={{ marginLeft: '8px' }}>📍 {item.location}</span>
+                                                <span style={{ marginLeft: '0px' }}>📍 {item.location}</span>
                                             </div>
                                         </div>
                                     </div>
