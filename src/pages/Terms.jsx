@@ -22,7 +22,6 @@ export default function Terms() {
             <p>© {new Date().getFullYear()} Peer to Peer Drop Off · All rights reserved</p>
         </footer>
         */}
-        
 
     </div>
   );  
