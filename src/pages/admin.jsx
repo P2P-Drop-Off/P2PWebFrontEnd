@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
 import { getPartners, updatePartnerStatus, deletePartner } from "../functions/firebase";
 import "../css/admin.css";
 
 const STATUS_OPTIONS = ["unapproved", "approved", "rejected"];
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
+const ADMIN_SESSION_KEY = "admin-authenticated";
+
+function getInitialAuthState() {
+  if (typeof window === "undefined") return false;
+  return window.sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+}
 
 function formatAddress(partner) {
   const parts = [
@@ -35,34 +42,95 @@ export default function AdminDashboard() {
   const [error, setError] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(getInitialAuthState);
 
-  const loadPartners = async () => {
-  setLoading(true);
-  setError(null);
-
-  try {
-    const data = await getPartners();
-
-    const sorted = data.sort((a, b) => {
-      const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
-      const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
-      return dateB - dateA; // newest first
-    });
-
-    console.log("Sorted partners:", sorted);
-    setPartners(sorted);
-
-  } catch (err) {
-    console.error(err);
-    setError("Failed to load partners.");
-  } finally {
-    setLoading(false);
-  }
-};
+  const loadPartners = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getPartners();
+      const sorted = data.sort((a, b) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+        return dateB - dateA;
+      });
+      setPartners(sorted);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load partners.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     loadPartners();
-  }, []);
+  }, [isAuthenticated, loadPartners]);
+
+  const handleUnlock = (event) => {
+    event.preventDefault();
+
+    if (!ADMIN_PASSWORD) {
+      setAuthError("Admin password is not configured in the environment.");
+      return;
+    }
+
+    if (password === ADMIN_PASSWORD) {
+      window.sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+      setIsAuthenticated(true);
+      setAuthError("");
+      setPassword("");
+      return;
+    }
+
+    setAuthError("Incorrect password.");
+  };
+
+  const handleLogout = () => {
+    window.sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    setIsAuthenticated(false);
+    setExpandedId(null);
+    setAuthError("");
+    setPassword("");
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Header />
+        <div className="admin-container">
+          <div className="section-header">
+            <h2>Admin</h2>
+            <p>Enter the admin password to continue.</p>
+          </div>
+
+          <div className="admin-login-card">
+            <form className="admin-login-form" onSubmit={handleUnlock}>
+              <label htmlFor="admin-password">Password</label>
+              <input
+                id="admin-password"
+                type="password"
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  if (authError) setAuthError("");
+                }}
+                placeholder="Enter admin password"
+                autoComplete="current-password"
+              />
+              {authError && <p className="admin-error">{authError}</p>}
+              <button type="submit" className="primary">
+                Unlock Admin
+              </button>
+            </form>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   const handleStatusChange = async (id, newStatus) => {
     setActionLoading(id);
@@ -97,9 +165,14 @@ export default function AdminDashboard() {
     <>
       <Header />
       <div className="admin-container">
-        <div className="section-header">
-          <h2>Admin</h2>
-          <p>Partner applications from the partners collection</p>
+        <div className="section-header admin-header-row">
+          <div>
+            <h2>Admin</h2>
+            <p>Partner applications from the partners collection</p>
+          </div>
+          <button type="button" className="btn-logout" onClick={handleLogout}>
+            Lock Admin
+          </button>
         </div>
 
         <div className="partners-section">

@@ -15,6 +15,58 @@
     margin: 6px 0 20px;
 }
 
+.admin-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.admin-login-card {
+    max-width: 420px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 24px;
+}
+
+.admin-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-login-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.admin-login-form input {
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.admin-login-form .admin-error {
+    margin: 0;
+}
+
+.btn-logout {
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-logout:hover {
+    background: #f8fafc;
+}
+
 /* Stats */
 .stats-grid {
     display: grid;
