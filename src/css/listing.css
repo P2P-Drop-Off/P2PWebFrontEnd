@@ -122,6 +122,20 @@
   border-radius: 50%;
 }
 
+/* Status Section */
+.status-section h4 {
+  font-weight: 900;
+  margin-bottom: 3px;
+  color: #2d3436;
+}
+
+.status-text {
+  color: #4a5568;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+
 /* Map Section */
 
 .map-preview {

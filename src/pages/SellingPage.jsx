@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../context/ListingsContext';
 import Header from '../components/Header';
+import { statusLabels } from '../context/ListingsContext';
 import '../css/sell.css';
 
 const SellingPage = () => {
@@ -105,6 +106,7 @@ const SellingPage = () => {
                                             <div className="item-price-mini">${item.price}</div>
                                             <div className="item-sub-meta">
                                                 <span style={{ marginLeft: '0px' }}>📍 {item.location}</span>
+                                                <span style={{ marginLeft: '0px' }}>Status: {statusLabels[item.status]}</span>
                                             </div>
                                         </div>
                                     </div>

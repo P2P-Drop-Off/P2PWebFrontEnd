@@ -1,0 +1,151 @@
+/* src/css/confirm.css */
+.confirm-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(245,249,252,1) 0%, rgba(250,250,255,1) 100%);
+  padding: 40px 24px;
+  gap: 28px;
+  align-items: center;
+}
+
+.confirm-card {
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow:
+    0 12px 40px rgba(46, 77, 111, 0.08),
+    0 0 35px rgba(120, 150, 255, 0.18);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.confirm-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+      135deg,
+      rgba(112, 191, 255, 0.25),
+      rgba(200, 132, 255, 0.25)
+  );
+  opacity: 0.25;
+  z-index: -1;
+}
+
+.title {
+  text-align: center;
+  padding: 15px 15px;
+}
+
+.title h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Instruction text */
+.confirm-card p {
+  margin: 0;
+  line-height: 1.6;
+  color: #4b5563; /* same as .description on home page */
+  font-weight: 500;
+}
+
+/* Steps list */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.step span {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: white;
+}
+
+.step p {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  color: #374151; /* same as home steps */
+}
+
+/* Buttons */
+.confirm-btn {
+  margin-top: 24px;
+  width: 100%;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #6fb3ff, #c58bff);
+  color: white;
+  transition: transform 0.2s ease;
+}
+
+.confirm-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Cancel button (optional) */
+.cancel-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: #f6f6f9; /* light neutral background */
+  color: #374151;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.cancel-btn:hover {
+  transform: translateY(-1px);
+  background: #e2e8f0;
+}
+
+/* Status message */
+.status-msg {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #6b7280; /* subtle gray */
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .confirm-card {
+    padding: 28px 20px;
+  }
+}
