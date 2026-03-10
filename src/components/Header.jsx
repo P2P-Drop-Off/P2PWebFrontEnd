@@ -7,7 +7,7 @@ import '../css/home.css';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { currentUser, logout } = useListings();
+  const { currentUser, logoutUser } = useListings();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
@@ -19,7 +19,7 @@ export default function Header() {
   };
 
   const handleSignOut = () => {
-    logout();
+    logoutUser();
     goTo('/');
   };
 

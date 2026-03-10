@@ -9,7 +9,7 @@ import "../css/login.css";
 
 export default function LogIn() {
   const navigate = useNavigate();
-  const { login } = useListings(); // Get login function from context
+  const { loginUser } = useListings(); // Get login function from context
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
@@ -38,7 +38,7 @@ export default function LogIn() {
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ');
 
-      login({ name: formattingName, email: formData.email });
+      loginUser({ name: formattingName, email: formData.email });
 
       // Navigate to selling dashboard
       navigate('/selling');
