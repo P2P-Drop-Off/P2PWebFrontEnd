@@ -7,7 +7,12 @@ import '../css/sell.css';
 const SellingPage = () => {
     const navigate = useNavigate();
     const { listings, stats, currentUser } = useListings();
+    
+    console.log("Current user:", currentUser);
 
+    const userListings = listings.filter( //modified 3/9
+        item => item.ownerUid === currentUser?.uid
+    );
     return (
         <div className="selling-container" style={{ padding: 0 }}>
             <Header />
@@ -51,12 +56,12 @@ const SellingPage = () => {
                     <div className="column-heading">
                         <h3>Your Active Listings</h3>
                         <p style={{ color: '#64748B', fontSize: '0.9rem' }}>
-                            {listings.length} items currently listed
+                            {userListings.length} items currently listed
                         </p>
                     </div>
 
                     <div className="detailed-list-scroll">
-                        {listings.length === 0 ? (
+                        {userListings.length === 0 ? (
                             <div className="empty-state-card">
                                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
                                 <h4>No active listings yet</h4>
@@ -64,7 +69,7 @@ const SellingPage = () => {
                             </div>
                         ) : (
                             <div className="item-list-grid">
-                                {listings.map(item => (
+                                {userListings.map(item => (
                                     <div key={item.id} className="listing-card-mini">
                                         <div className="item-visual">
                                             {item.image ? (

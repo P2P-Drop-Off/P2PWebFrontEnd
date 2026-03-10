@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getPartners } from "../functions/firebase";
+import { getPartners, logIn, logOut } from "../functions/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const ListingsContext = createContext();
 export const useListings = () => useContext(ListingsContext);
@@ -20,56 +21,95 @@ export const ListingsProvider = ({ children }) => {
     }
   });
 
-  // Stores: derived from Firebase partners (approved only for display)
   const [stores, setStores] = useState([]);
 
-  // Auth
-  const login = (user) => {
-    setCurrentUser(user);
-    localStorage.setItem("currentUser", JSON.stringify(user));
-  };
-  const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem("currentUser");
+  // -------------------- Firebase Auth Listener --------------------
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userWithUid = {
+          uid: user.uid,
+          name: user.displayName || user.email.split("@")[0],
+          email: user.email,
+        };
+        setCurrentUser(userWithUid);
+        localStorage.setItem("currentUser", JSON.stringify(userWithUid));
+      } else {
+        setCurrentUser(null);
+        localStorage.removeItem("currentUser");
+      }
+    });
+
+    return () => unsubscribe(); // clean up listener
+  }, []);
+
+  // -------------------- Auth Helpers --------------------
+  const loginUser = async (email, password) => {
+    try {
+      await logIn(email, password);
+      // No need to manually set currentUser — listener updates it
+    } catch (err) {
+      console.error("Login failed:", err);
+      throw err;
+    }
   };
 
-  // Fetch partners from Firebase (partners collection) and use for listings + stores
+  const logoutUser = async () => {
+    try {
+      await logOut();
+      // listener will update currentUser
+    } catch (err) {
+      console.error("Logout failed:", err);
+      throw err;
+    }
+  };
+
+  // -------------------- Fetch Listings --------------------
   const fetchListings = async () => {
     setLoading(true);
     setError(null);
-
     try {
-      const res = await fetch("http://localhost:8080/api/items");
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch listings");
-      }
+      if (!user) throw new Error("User not logged in");
 
-      const data = await res.json();
+      const token = await user.getIdToken(); // get Firebase ID token
 
-      setListings(data);
+      const res = await fetch("http://localhost:8080/api/items", {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // include token, send to backend
+        },
+    });
 
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      throw new Error("Failed to fetch listings");
     }
-  };
+
+    const data = await res.json();
+    const myListings = data.filter(item => item.ownerUid === currentUser.uid);
+    setListings(myListings);
+
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const fetchStores = async () => {
     try {
       const partners = await getPartners();
-
       const approved = partners.filter((p) => p.status === "approved");
-
       setStores(
         approved.map((p) => ({
           id: p.id,
           name: p.storeName,
-          address: [p.street, p.suite, p.city, p.state, p.zip]
-            .filter(Boolean)
-            .join(", "),
+          address: [p.street, p.suite, p.city, p.state, p.zip].filter(Boolean).join(", "),
           price: p.space ? `${p.space} sq ft` : "",
           lat: p.lat,
           lng: p.lng,
@@ -81,22 +121,34 @@ export const ListingsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchListings();
-    fetchStores();
-  }, []);
+    // Fetch listings when currentUser exists
+    if (currentUser) {
+      fetchListings(); // fetch and filter by currentUser.uid
+    }
 
-  // Add new listing (POST)
+    // Stores fetched on mount
+    fetchStores();
+  }, [currentUser]);
+
+  // -------------------- Add Listing --------------------
   const addListing = async (newListing) => {
     setLoading(true);
     try {
+      if (!currentUser?.uid) throw new Error("User is not logged in");
+
+      // Attach the logged-in user's UID automatically
+      const listingWithOwner = { ...newListing, ownerUid: currentUser.uid };
+
       const res = await fetch("http://localhost:8080/api/items", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newListing),
+        headers: { 
+          "Content-Type": "application/json", 
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(listingWithOwner),
       });
 
       const text = await res.text();
-
       if (!res.ok) {
         console.error("Status:", res.status);
         console.error("Raw response:", text);
@@ -105,7 +157,6 @@ export const ListingsProvider = ({ children }) => {
 
       const created = JSON.parse(text);
       setListings((prev) => [created, ...prev]);
-
     } catch (err) {
       console.error("FULL ERROR OBJECT:", err);
       setError(err.message);
@@ -114,14 +165,18 @@ export const ListingsProvider = ({ children }) => {
     }
   };
 
-  // --- Stats (derived state) ---
+  // -------------------- Stats --------------------
   const stats = {
     itemsWatching: watching.length,
     activeListings: listings.length,
-    totalEarnings: 0, // Update if tracking earnings
+    totalEarnings: 0, // extend if tracking earnings
     totalViews: listings.reduce((sum, l) => sum + (l.views || 0), 0),
   };
 
+  useEffect(() => {
+        console.log("All listings:", listings);
+        console.log("HELLOOOOOO")
+      }, [listings]); // get rid of after debug
   return (
     <ListingsContext.Provider
       value={{
@@ -132,8 +187,8 @@ export const ListingsProvider = ({ children }) => {
         stats,
         addListing,
         currentUser,
-        login,
-        logout,
+        loginUser,
+        logoutUser,
         loading,
         error,
         setWatching,
@@ -144,3 +199,4 @@ export const ListingsProvider = ({ children }) => {
     </ListingsContext.Provider>
   );
 };
+

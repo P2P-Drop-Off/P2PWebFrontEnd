@@ -9,7 +9,7 @@ import "../css/create-account.css";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
-  const { login } = useListings();
+  const { loginUser } = useListings();
   const [step, setStep] = useState(1);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
@@ -55,7 +55,7 @@ export default function CreateAccount() {
       console.log("Account created successfully");
 
       // Log in to context
-      login({ name: `${form.firstName} ${form.lastName}`, email: form.email });
+      loginUser({ name: `${form.firstName} ${form.lastName}`, email: form.email });
 
       // Navigate to selling dashboard after successful account creation
       setTimeout(() => {

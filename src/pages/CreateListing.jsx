@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../context/ListingsContext';
+import { auth } from "../functions/firebase";
 import MapComponent from '../components/MapComponent';
 import Header from '../components/Header';
 import '../css/sell.css';
+
 
 const CreateListing = () => {
   const navigate = useNavigate();
@@ -109,17 +111,34 @@ const CreateListing = () => {
         fd.append("location", formData.location?.name || "");
         fd.append("imageFile", imageFile);
 
+        const user = auth.currentUser;
+
+        if (!user) {
+          throw new Error("User not logged in");
+        }
+
+        const token = await user.getIdToken();
+
         const res = await fetch("http://localhost:8080/api/items", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: fd
-        });
-        //to//1.
+      });
+
       if (!res.ok) {
         const text = await res.text();
         throw new Error(`Failed to create listing: ${res.status} ${text}`);
       }
 
-      const createdListing = await res.json();
+      let createdListing = {}; //modified 3/9
+      try {
+        createdListing = await res.json();
+      } catch {
+        createdListing = {};
+      }
+
 
       /* Add listing to dashboard */
       setListings(prev => [
