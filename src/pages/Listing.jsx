@@ -1,14 +1,12 @@
 // src/pages/Listing.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useListings } from "../context/ListingsContext";
 import "../css/listing.css";
 import Header from "../components/Header";
 
 export default function Listing() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { stores } = useListings();
 
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,10 +17,7 @@ export default function Listing() {
   const fetchListing = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8080/api/items/${id}`, {
-        headers: {
-            "Authorization": `Bearer ${token}`,
-      }, });
+      const res = await fetch(`http://localhost:8080/api/items/${id}`);
       if (!res.ok) {
         if (res.status === 404) throw new Error("Listing not found");
         throw new Error("Failed to fetch listing");

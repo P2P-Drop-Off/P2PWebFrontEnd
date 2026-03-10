@@ -134,9 +134,13 @@ export const ListingsProvider = ({ children }) => {
   const addListing = async (newListing) => {
     setLoading(true);
     try {
-      if (!currentUser?.uid) throw new Error("User is not logged in");
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-      // Attach the logged-in user's UID automatically
+      if (!user) throw new Error("User not logged in");
+
+      const token = await user.getIdToken();
+
       const listingWithOwner = { ...newListing, ownerUid: currentUser.uid };
 
       const res = await fetch("http://localhost:8080/api/items", {

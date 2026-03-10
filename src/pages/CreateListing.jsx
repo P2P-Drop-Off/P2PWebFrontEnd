@@ -155,7 +155,7 @@ const CreateListing = () => {
         }
       ]);
 
-navigate(`/selling`);
+navigate(`/listing-created/${createdListing.id}`);
 
     } catch (err) {
       console.error(err);
