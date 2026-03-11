@@ -1416,3 +1416,31 @@
 .cancel-delete {
   background: #ccc;
 }
+
+.item-code {
+    margin-left: auto;
+    color: red;
+    font-size: "1.1rem";
+}
+
+/* enabled modal button in partner dashboard */
+.modal-button-enabled {
+  padding: 12px 20px;
+  margin-top: 20px;
+  background-color: #10B981;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* disabled button in partner dashboard */
+.modal-button-disabled {
+  padding: 12px 20px;
+  margin-top: 20px;
+  background-color: #ccc; 
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: not-allowed;
+}

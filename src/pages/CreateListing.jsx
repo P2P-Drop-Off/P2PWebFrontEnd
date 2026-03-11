@@ -109,12 +109,14 @@ const CreateListing = () => {
         fd.append("description", formData.description);
         fd.append("price", safePrice);
         fd.append("location", formData.location?.name || "");
+        fd.append("locationId", formData.location?.id);
+        fd.append("marketplaceLink", formData.marketplaceLink || "");
         fd.append("imageFile", imageFile);
 
         const user = auth.currentUser;
 
         if (!user) {
-          throw new Error("User not logged in");
+          throw new Error("User not logged in!");
         }
 
         const token = await user.getIdToken();
