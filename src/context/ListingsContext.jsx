@@ -5,6 +5,13 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 const ListingsContext = createContext();
 export const useListings = () => useContext(ListingsContext);
 
+export const statusLabels = {
+        active: "Available",
+        approved_by_buyer: "Buyer Confirmed Transaction - Awaiting Drop Off",
+        dropped_off: "Dropped Off",
+        payment_received: "Payment Recieved - Item Awaiting Pick Up",
+      };
+
 export const ListingsProvider = ({ children }) => {
   const [listings, setListings] = useState([]);
   const [watching, setWatching] = useState([]);
@@ -22,6 +29,14 @@ export const ListingsProvider = ({ children }) => {
   });
 
   const [stores, setStores] = useState([]);
+
+  const updateListingStatus = (listingId, newStatus) => {
+    setListings(prev =>
+      prev.map(item =>
+        item.id === listingId ? { ...item, status: newStatus } : item
+      )
+    );
+  };
 
   // -------------------- Firebase Auth Listener --------------------
   useEffect(() => {
@@ -179,7 +194,6 @@ export const ListingsProvider = ({ children }) => {
 
   useEffect(() => {
         console.log("All listings:", listings);
-        console.log("HELLOOOOOO")
       }, [listings]); // get rid of after debug
   return (
     <ListingsContext.Provider
@@ -197,6 +211,7 @@ export const ListingsProvider = ({ children }) => {
         error,
         setWatching,
         fetchListings,
+        updateListingStatus,
       }}
     >
       {children}

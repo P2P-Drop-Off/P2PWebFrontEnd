@@ -12,6 +12,7 @@ import { ListingsProvider } from './context/ListingsContext'
 import './App.css'
 import Terms from './pages/Terms'
 import Listing from './pages/Listing'
+import ConfirmTransaction from './pages/ConfirmTransaction'
 import ListingCreated from './pages/ListingCreated';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/listing/:id" element={<Listing />} />
         <Route path="/listing-created/:id" element={<ListingCreated />} />
+        <Route path="/confirm/:id" element={<ConfirmTransaction />} />
       </Routes>
     </ListingsProvider>
   )

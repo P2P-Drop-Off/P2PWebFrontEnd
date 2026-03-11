@@ -1,6 +1,7 @@
 // src/pages/Listing.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { statusLabels } from "../context/ListingsContext";
 import "../css/listing.css";
 import Header from "../components/Header";
 
@@ -100,10 +101,13 @@ export default function Listing() {
                 </div>
               </div>
             </div>
-
+            <div className="status-section">
+              <h4>Item Status</h4>
+              <p className="status-text">{statusLabels[listing.status]}</p>
+            </div>
             <button
               className="continue-btn"
-              onClick={() => alert("Continue flow (checkout / confirm pickup)")}
+              onClick={() => navigate(`/confirm/${id}`)}
             >
               Continue
             </button>
