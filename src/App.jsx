@@ -14,29 +14,39 @@ import Terms from './pages/Terms'
 import Listing from './pages/Listing'
 import ConfirmTransaction from './pages/ConfirmTransaction'
 import ListingCreated from './pages/ListingCreated';
+import ParnterDashboard from './pages/PartnerDashboard';
 
 function App() {
   return (
-    <ListingsProvider>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/selling" element={<SellingPage />} />
-        <Route path="/create-listing" element={<CreateListing />} />
-        <Route path="/map" element={
-          <div className="app">
-            <MapComponent />
-          </div>
-        } />
-        <Route path="/login" element={<LogIn />} />
-        <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/partner-form" element={<PartnerForm />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/listing/:id" element={<Listing />} />
-        <Route path="/listing-created/:id" element={<ListingCreated />} />
-        <Route path="/confirm/:id" element={<ConfirmTransaction />} />
-      </Routes>
-    </ListingsProvider>
+    <Routes>
+      <Route path="/partner-dashboard/:locationId" element={<ParnterDashboard />} />
+    <Route
+    path="/*"
+    element={
+      <ListingsProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/selling" element={<SellingPage />} />
+          <Route path="/create-listing" element={<CreateListing />} />
+          <Route path="/map" element={
+            <div className="app">
+              <MapComponent />
+            </div>
+          } />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/create-account" element={<CreateAccount />} />
+          <Route path="/partner-form" element={<PartnerForm />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/listing/:id" element={<Listing />} />
+          <Route path="/listing-created/:id" element={<ListingCreated />} />
+          <Route path="/confirm/:id" element={<ConfirmTransaction />} />
+          
+        </Routes>
+      </ListingsProvider>
+    }
+    />
+    </Routes>
   )
 }
 

@@ -10,6 +10,7 @@ export const statusLabels = {
         approved_by_buyer: "Buyer Confirmed Transaction - Awaiting Drop Off",
         dropped_off: "Dropped Off",
         payment_received: "Payment Recieved - Item Awaiting Pick Up",
+        picked_up: "Item Picked Up",
       };
 
 export const ListingsProvider = ({ children }) => {
@@ -85,12 +86,22 @@ export const ListingsProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
 
-      if (!user) throw new Error("User not logged in");
+      const auth = getAuth();
+      const user = await new Promise((resolve, reject) => {
+      onAuthStateChanged(auth, (currentUser) => {
+        if (currentUser) {
+          resolve(currentUser);
+        } else {
+          reject(new Error("User not logged in"));
+        }
+      });
+    });
+
+      if (!user) throw new Error("User not logged in!!!");
 
       const token = await user.getIdToken(); // get Firebase ID token
+
 
       const res = await fetch("http://localhost:8080/api/items", {
         headers: {

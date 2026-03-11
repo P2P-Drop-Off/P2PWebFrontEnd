@@ -79,7 +79,7 @@ const SellingPage = () => {
       return;
     }
 
-    const token = await firebaseUser.getIdToken(); // ✅ this exists
+    const token = await firebaseUser.getIdToken();
 
     const response = await fetch(`http://localhost:8080/api/items/${item.id}/status`, {
       method: "PUT",
@@ -267,24 +267,24 @@ const SellingPage = () => {
                 <div className="status-text">{statusLabels[selectedItem.status]}</div>
               </div>
 
-              {selectedItem.status === "approved_by_buyer" ? (
-                    <button
-                        className="continue-btn"
-                        onClick={() => markPaymentReceived(selectedItem)}
+              <button
+                    className={`continue-btn ${
+                        selectedItem.status === "dropped_off" ? "" : "disabled"
+                    }`}
+                    disabled={!(selectedItem.status === "dropped_off")}
+                    onClick={() => {
+                        if (selectedItem.status === "dropped_off") {
+                        markPaymentReceived(selectedItem);
+                        }
+                    }}
                     >
-                        Mark Payment Received
-                    </button>
-
-                    ) : selectedItem.status === "payment_received" ? (
-                    <button className="continue-btn disabled" disabled>
-                        Payment Received
-                    </button>
-
-                    ) : (
-                    <button className="continue-btn disabled" disabled>
-                        Awaiting Buyer Approval
-                    </button>
-                )}
+                    {selectedItem.status === "active" && "Awaiting Buyer Approval"}
+                    {selectedItem.status === "approved_by_buyer" && "Awaiting Item Drop Off"}
+                    {(selectedItem.status === "dropped_off" ||
+                        selectedItem.status === "payment_received" ||
+                        selectedItem.status === "picked_up") &&
+                        "Payment Received"}
+                </button>
             </div>
           </div>
         </div>
