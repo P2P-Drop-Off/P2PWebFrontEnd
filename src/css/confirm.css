@@ -52,6 +52,13 @@
   -webkit-text-fill-color: transparent;
 }
 
+.next-steps {
+    text-align: left;
+    color: #b874fb;
+}
+
+
+
 /* Instruction text */
 .confirm-card p {
   margin: 0;
@@ -141,6 +148,20 @@
   font-weight: 600;
   color: #6b7280; /* subtle gray */
   text-align: center;
+}
+
+.six-digit-code-card {
+  background: linear-gradient(90deg, #6fb2ff71, #c58bff);
+  border-radius: 10px;
+  text-align: center;
+  padding: 15px;
+}
+
+.six-digit-code {
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 6px;
+  margin: 10px 0;
 }
 
 /* Responsive */

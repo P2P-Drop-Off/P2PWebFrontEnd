@@ -9,8 +9,8 @@ export const statusLabels = {
         active: "Available",
         approved_by_buyer: "Buyer Confirmed Transaction - Awaiting Drop Off",
         dropped_off: "Dropped Off",
-        paid_ready_for_pickup: "Payment Recieved by Seller - Awaiting Pickup",
-    };
+        payment_received: "Payment Recieved - Item Awaiting Pick Up",
+      };
 
 export const ListingsProvider = ({ children }) => {
   const [listings, setListings] = useState([]);
@@ -29,6 +29,14 @@ export const ListingsProvider = ({ children }) => {
   });
 
   const [stores, setStores] = useState([]);
+
+  const updateListingStatus = (listingId, newStatus) => {
+    setListings(prev =>
+      prev.map(item =>
+        item.id === listingId ? { ...item, status: newStatus } : item
+      )
+    );
+  };
 
   // -------------------- Firebase Auth Listener --------------------
   useEffect(() => {
@@ -203,6 +211,7 @@ export const ListingsProvider = ({ children }) => {
         error,
         setWatching,
         fetchListings,
+        updateListingStatus,
       }}
     >
       {children}
