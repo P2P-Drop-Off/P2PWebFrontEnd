@@ -1105,26 +1105,26 @@
 }
 
 /* error styles */
-.input-error {
+.input-error-sell {
   border-color: #ef4444 !important;
   background: #fef2f2;
 }
 
-.error-text {
+.error-text-sell{
   color: #ef4444;
   font-size: 14px;
   margin-top: -20px;
   margin-bottom: 10px;
 }
 
-.field-error {
+.field-error-sell {
     color: #ef4444;
     font-size: 14px;
     margin-top: 5px;
     
 }
 
-.section-error {
+.section-error-sell {
   color: #ef4444;
   font-size: 13px;
   margin-bottom: 12px;
@@ -1138,7 +1138,7 @@
 
 
 /* ensures input + error stack vertically */
-.input-error-stack {
+.input-error-stack-sell {
   display: flex;
   flex-direction: column;
   width: 100%;

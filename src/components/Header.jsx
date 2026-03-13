@@ -36,7 +36,7 @@ export default function Header() {
   return (
     <header className={`site-header ${menuOpen ? 'menu-open' : ''}`}>
       <div className="brand" onClick={() => goTo("/")}>
-        <div className="logo">P2P</div>
+        <div className="logo">DNO</div>
       </div>
 
       <button

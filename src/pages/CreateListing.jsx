@@ -199,7 +199,7 @@ navigate(`/listing-created/${createdListing.id}`);
             <div className="field-group">
               <label>Item Name *</label>
               <input
-                className={`input-styled ${fieldErrors.title ? "input-error" : ""}`}
+                className={`input-styled ${fieldErrors.title ? "input-error-sell" : ""}`}
                 type="text"
                 placeholder="e.g., Vintage Leather Sofa"
                 value={formData.title}
@@ -207,7 +207,7 @@ navigate(`/listing-created/${createdListing.id}`);
               />
             </div>
             {fieldErrors.title && (
-                <div className="error-text">{fieldErrors.title}</div>
+                <div className="error-text-sell">{fieldErrors.title}</div>
             )}
 
             <div className="field-group">
@@ -277,7 +277,7 @@ navigate(`/listing-created/${createdListing.id}`);
             </div>
 
             {fieldErrors.image && (
-                <div className="error-text">{fieldErrors.image}</div>
+                <div className="error-text-sell">{fieldErrors.image}</div>
             )}
 
             <div className="form-row">
@@ -289,7 +289,7 @@ navigate(`/listing-created/${createdListing.id}`);
                     <span className="input-icon">$</span>
 
                     <input
-                      className={`input-styled ${fieldErrors.price ? "input-error" : ""}`}
+                      className={`input-styled ${fieldErrors.price ? "input-error-sell" : ""}`}
                       type="number"
                       placeholder="0.00"
                       value={formData.price}
@@ -300,7 +300,7 @@ navigate(`/listing-created/${createdListing.id}`);
                
               
               {fieldErrors.price && (
-                    <div className="field-error">{fieldErrors.price}</div>
+                    <div className="field-error-sell">{fieldErrors.price}</div>
                   )}
               </div>
             
@@ -462,7 +462,7 @@ navigate(`/listing-created/${createdListing.id}`);
         </button>
       </footer>
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="error-message-sell">{error}</p>}
     </div>
   );
 };

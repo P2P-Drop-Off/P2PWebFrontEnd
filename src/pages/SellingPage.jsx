@@ -112,7 +112,6 @@ const SellingPage = () => {
     alert("Failed to update status");
   }
 };
-
   return (
     <div className="selling-container" style={{ padding: 0 }}>
       <Header />
@@ -123,9 +122,10 @@ const SellingPage = () => {
           <h1>
             Welcome back, {currentUser ? currentUser.name.split(' ')[0] : 'Guest'}! 👋
           </h1>
+          
           <p>Manage your active listings and earnings</p>
         </section>
-
+        
         {/* Stats Panel */}
         <div className="stats-panel">
           <div className="stat-box">

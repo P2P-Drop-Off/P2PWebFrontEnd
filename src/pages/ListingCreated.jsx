@@ -52,10 +52,10 @@ const ListingCreated = () => {
                 </div>
 
                 <Link
-                    to={`/listing/${id}`}
+                    to={`/selling`}
                     className="view-listing-btn"
                 >
-                    View Listing
+                    Selling Dashboard
                 </Link>
             </div>
         </div>

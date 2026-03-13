@@ -56,6 +56,8 @@
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
 
@@ -293,18 +295,19 @@ label {
 }
 
 /* Error styles */
-.input-error {
+.input-error-partner {
   border-color: #ef4444 !important;
   background: #fef2f2;
 }
 
-.error-text {
+.error-text-partner {
+  display: block;
   color: #ef4444;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 14px;
+  padding-top: 10px;
 }
 
-.section-error {
+.section-error-partner {
   color: #ef4444;
   font-size: 13px;
   margin-bottom: 12px;
@@ -384,11 +387,27 @@ label {
     width: 100%;
     max-width: 170px; 
   }
+
+  .form-actions {
+    position: static;   /* removes sticky behavior */
+    width: 100%;
+    box-shadow: none;
+    border-top: none;
+    margin-top: 30px;
+    background: transparent;
+  }
+
+  .dashboard-container {
+    padding-bottom: 15px;
+  }
 }
 
 /* Fixes grid-2, will stack vertically on small screens */
 @media (max-width: 800px) {
   .grid-2 {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
   }
 }

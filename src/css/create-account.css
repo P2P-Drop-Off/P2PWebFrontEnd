@@ -410,6 +410,7 @@
   border: 1px solid #cbd5e1;
   padding: 10px 20px;
   border-radius: 999px;
+  color: black;
   font-size: 15px;
   cursor: pointer;
   transition: background 0.2s ease;
