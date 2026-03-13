@@ -1382,6 +1382,20 @@
   transform: scale(1.2);
 }
 
+.listing-action {
+    font-size: 18px;
+    margin-left: auto;
+}
+
+.pickup-code {
+  background: #eef2ff;
+  color: #3730a3;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

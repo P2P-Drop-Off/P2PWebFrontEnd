@@ -199,7 +199,9 @@ export const ListingsProvider = ({ children }) => {
   const stats = {
     itemsWatching: watching.length,
     activeListings: listings.length,
-    totalEarnings: 0, // extend if tracking earnings
+    totalEarnings: listings
+    .filter(l => l.status === "payment_received" || l.status === "picked_up")
+    .reduce((sum, l) => sum + Number(l.price || 0), 0),
     totalViews: listings.reduce((sum, l) => sum + (l.views || 0), 0),
   };
 
