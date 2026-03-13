@@ -208,7 +208,7 @@ const handleUpdateStatus = async () => {
 
                   <div className="item-details-mini">
                     <h4>{item.title}</h4>
-                    <div className="item-price-mini">${item.price / 100}</div>
+                    <div className="item-price-mini">${item.price}</div>
                     <div className="item-sub-meta">
                       <span>Status: {statusLabels[item.status]}</span>
                     </div>

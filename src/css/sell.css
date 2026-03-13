@@ -1441,7 +1441,7 @@
 .modal-button-enabled {
   padding: 12px 20px;
   margin-top: 20px;
-  background-color: #10B981;
+  background: linear-gradient(90deg, #4facfe, #9c4dff);
   color: #fff;
   border: none;
   border-radius: 8px;
