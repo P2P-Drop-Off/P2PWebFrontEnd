@@ -261,7 +261,7 @@ const handleUpdateStatus = async () => {
               <p>
                 Pickup Code: <b style={{ color: "red" }}>{selectedItem.sixDigitCode}</b>
               </p>
-              <button
+              <button 
                 onClick={handleUpdateStatus}
                 disabled={selectedItem.status === "dropped_off" || selectedItem.status === "picked_up"}
                 className={

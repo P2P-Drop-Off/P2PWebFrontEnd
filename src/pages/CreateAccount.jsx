@@ -686,7 +686,7 @@ function Step4AllSet({ onBack, onCreate, isCreating }) {
         </svg>
       </div>
 
-      <h2>Welcome to P2P!</h2>
+      <h2>Welcome to Drop 'N Off!</h2>
       <p className="step-subtitle">
         {isCreating
           ? "Creating your account..."
