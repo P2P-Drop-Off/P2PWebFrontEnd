@@ -15,9 +15,13 @@ const SellingPage = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
 
   // Filter listings for current seller
-  const userListings = listings.filter(
-    item => item.ownerUid === currentUser?.uid
-  );
+  const userListings = listings
+  .filter(item => item.ownerUid === currentUser?.uid)
+  .sort((a, b) => {
+    const timeA = a.createdAt?.seconds || 0;
+    const timeB = b.createdAt?.seconds || 0;
+    return timeB - timeA;
+  });
 
   const openModal = (item) => {
     setSelectedItem(item);
@@ -92,6 +96,13 @@ const SellingPage = () => {
 
     if (response.ok) {
       setSelectedItem(prev => ({ ...prev, status: "payment_received" }));
+      setListings(prev =>
+        prev.map(i =>
+        i.id === item.id
+            ? { ...i, status: "payment_received"  || "picked_up" }
+            : i
+        )
+    );
     } else {
       const text = await response.text();
       alert("Failed to update status: " + text);
@@ -101,7 +112,6 @@ const SellingPage = () => {
     alert("Failed to update status");
   }
 };
-
   return (
     <div className="selling-container" style={{ padding: 0 }}>
       <Header />
@@ -112,9 +122,10 @@ const SellingPage = () => {
           <h1>
             Welcome back, {currentUser ? currentUser.name.split(' ')[0] : 'Guest'}! 👋
           </h1>
+          
           <p>Manage your active listings and earnings</p>
         </section>
-
+        
         {/* Stats Panel */}
         <div className="stats-panel">
           <div className="stat-box">
@@ -197,9 +208,9 @@ const SellingPage = () => {
                         <span style={{ marginLeft: '0px' }}>Status: {statusLabels[item.status]}</span>
                       </div>
                     </div>
-                    <div className = "delete-icon">
+                    <div className="listing-action">
                         {item.status === "active" && (
-                        <span
+                            <span
                             className="delete-icon"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -207,7 +218,16 @@ const SellingPage = () => {
                             }}
                             >
                             🗑️
-                        </span>
+                            </span>
+                        )}
+
+                        {item.status === "approved_by_buyer" && item.sixDigitCode && (
+                            <div
+                            className="item-code"
+                            onClick={(e) => e.stopPropagation()}
+                            >
+                            <b>{item.sixDigitCode}</b>
+                            </div>
                         )}
                     </div>
                   </div>

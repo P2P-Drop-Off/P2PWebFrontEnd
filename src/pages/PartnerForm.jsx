@@ -57,6 +57,8 @@ export default function PartnerForm() {
     amenities: [],
   });
 
+
+  
   const handleChange = (e) => {
       const { name, value } = e.target;
 
@@ -76,6 +78,10 @@ export default function PartnerForm() {
       }
 
       setForm((prev) => ({ ...prev, [name]: updatedValue }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: ""
+      }));
 
       const validateField = (name, value) => {
         let errorMsg = "";
@@ -213,7 +219,7 @@ export default function PartnerForm() {
         if (Object.keys(newErrors).length > 0) {
           setTimeout(() => {
             const firstErrorElement = document.querySelector(
-              ".input-error, .section-error, .address-autocomplete-wrap .error-text"
+              ".input-error-partner, .section-error-partner, .address-autocomplete-wrap .error-text-partner"
             );
             if (firstErrorElement)
               firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -412,7 +418,8 @@ export default function PartnerForm() {
   {/* Business Hours */}
   <SectionCard title="Business Hours">
     {errors.hours && (
-      <div className="section-error">{errors.hours}</div>
+      
+      <div className="section-error-partner">{errors.hours}</div>
               )}
               <div className="hours-list">
                 {[
@@ -564,13 +571,16 @@ function SectionCard({ title, children }) {
 
 function Input({ label, error, ...props }) {
   return (
-    <div className="form-group">
-      <label>{label}</label>
-      <input
-        className={`input ${error ? "input-error" : ""}`}
-        {...props}
-      />
-      {error && <span className="error-text">{error}</span>}
+   
+      <div className="form-group">
+        <div className="partner-form-wrapper">
+        <label>{label}</label>
+        <input
+          className={`input ${error ? "input-error-partner" : ""}`}
+          {...props}
+        />
+        {error && <span className="error-text-partner">{error}</span>}
+      </div>
     </div>
   );
 }

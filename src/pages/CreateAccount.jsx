@@ -77,7 +77,7 @@ export default function CreateAccount() {
       <aside className="sidebar">
         <div className="sidebar-content">
           <div className="sidebar-header">
-            <h1 className="sidebar-title">Join P2P</h1>
+            <h1 className="sidebar-title">Join Drop 'N Off</h1>
           </div>
 
           <nav className="steps-nav">
@@ -85,7 +85,7 @@ export default function CreateAccount() {
               stepNumber={1}
               currentStep={step}
               title="Account Details"
-              description="Basic information"
+              description="Account information"
             />
             <StepItem
               stepNumber={2}
@@ -97,7 +97,7 @@ export default function CreateAccount() {
               stepNumber={3}
               currentStep={step}
               title="Shopping Interests"
-              description="Personalize your feed"
+              description="Personalize your experience"
             />
             <StepItem
               stepNumber={4}
@@ -583,8 +583,7 @@ function Step2Location({ form, handleChange, onBack, onNext }) {
       <div className="info-box">
         <span className="bulb-icon">💡</span>
         <p>
-          Your location helps us show you the best local deals and reduces
-          shipping costs
+          Your location helps us use navigation services to provide accurate pickup and drop off directions.
         </p>
       </div>
 
@@ -711,7 +710,7 @@ function Step4AllSet({ onBack, onCreate, isCreating }) {
               Back
             </button>
             <button className="btn-primary" onClick={onCreate}>
-              Create Account &gt;
+              Create Account
             </button>
           </div>
         </>
